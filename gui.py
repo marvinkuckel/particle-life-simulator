@@ -1,7 +1,7 @@
 import pygame 
 
 class Button(): 
-    def __init__(self, x, y, width, height, text, color):
+    def __init__(self, x, y, width, height, text, color,action=None):
         """
         x: X-coordinate of the button
         y: Y-coordinate of the button
@@ -14,6 +14,7 @@ class Button():
         self.text = text
         self.color = color                      
         self.font = pygame.font.Font(None, 36)  #default font & size 
+        self.action = action
 
     
     def draw_button(self, screen):     #Draw the button on the screen.
@@ -26,9 +27,12 @@ class Button():
         text_rect = text_surface.get_rect(center=self.rect.center)
         screen.blit(text_surface, text_rect)
     
-    def trigger(self):
-        #it should happen an action when you trigger/click the button
-        pass 
+    def trigger(self, event):
+        #Check if the button is clicked and trigger its action.
+        if event.type == pygame.MOUSEBUTTONDOWN:   #Mouse click?
+            if self.rect.collidepoint(event.pos):  #Mouse click within button?
+                if self.action:                    #If there is an action,...
+                    self.action()                  #...trigger it.
     
 
 class GUI(): 
@@ -38,7 +42,7 @@ class GUI():
         self.screen_height = screen_height
         self.control_panel_width = control_panel_width
         self.buttons = []
-        self.setup_controls() 
+        self.buttons_for_panel() 
         
     def buttons_for_panel(self):
         #make buttons to the control panel
@@ -58,9 +62,23 @@ class GUI():
     
     
     def control_panel(self):
-        #this is where the bar should go where you can adjust color and interaction
-        pygame.draw.rect(self.screen, (0, 0, 0), (self.screen_width, 0, self.control_panel_width, self.screen_height))  # Black control panel
+        #this is the bar where you can adjust color and interaction. it has buttons
+        pygame.draw.rect(self.screen, (20, 20, 20), (self.screen_width, 0, self.control_panel_width, self.screen_height))  #control panel
         for button in self.buttons:
             button.draw_button(self.screen)   #draw rthe buttons in buttons list
-
+            
+    def handle_triggers(self, event):
+        #Handle triggers for all buttons in the control panel.
+        for button in self.buttons:
+            button.trigger(event)
     
+    
+    #i am not sure if they are right in this class, but i still added them here
+    def start_simulation(self):
+        pass
+
+    def pause_simulation(self):
+        pass
+
+    def reset(self):
+        pass
