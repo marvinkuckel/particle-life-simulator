@@ -30,23 +30,6 @@ class Button():
         #it should happen an action when you trigger/click the button
         pass 
     
-    
-    #Impoertant Buttons 
-    def start_button(self, screen):
-        self.text = "Start"  
-        self.color = (0, 200, 0)  # Green
-        self.draw_button(screen)
-    
-    def pause_button(self, screen): 
-        self.text = "Stop"  
-        self.color = (200, 0, 0)  # Red
-        self.draw_button(screen)
-        
-    def reset_button(self, screen): 
-        self.text = "Reset" 
-        self.color = (0, 0, 200)  # Blue
-        self.draw_button(screen)
-
 
 class GUI(): 
     def __init__(self, screen, screen_width, screen_height, control_panel_width):
@@ -56,6 +39,18 @@ class GUI():
         self.control_panel_width = control_panel_width
         self.buttons = []
         self.setup_controls() 
+        
+    def buttons_for_panel(self):
+        #make buttons to the control panel
+        start_b = self.screen_width + 20  #X-position in the control panel
+        button_width = self.control_panel_width - 40   #button width
+        button_height = 50                             #button height           
+
+        #buttons
+        self.buttons.append(Button(start_b, 50, button_width, button_height, "Start", (0, 200, 0), self.start_simulation))
+        self.buttons.append(Button(start_b, 120, button_width, button_height, "Pause", (200, 0, 0), self.pause_simulation))
+        self.buttons.append(Button(start_b, 190, button_width, button_height, "Reset", (0, 0, 200), self.reset))
+
      
     def board(self):
         #Draw the main game board
@@ -65,6 +60,7 @@ class GUI():
     def control_panel(self):
         #this is where the bar should go where you can adjust color and interaction
         pygame.draw.rect(self.screen, (0, 0, 0), (self.screen_width, 0, self.control_panel_width, self.screen_height))  # Black control panel
-
+        for button in self.buttons:
+            button.draw_button(self.screen)   #draw rthe buttons in buttons list
 
     
