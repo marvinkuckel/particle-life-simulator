@@ -1,6 +1,7 @@
 ### particle.py 
 
 import random # for random number generation
+import pygame # for creating a window, graphics, handling events etc.
 
 
 class Particle:
@@ -23,4 +24,7 @@ class Particle:
         self.velocity = (self.velocity[0] * self.friction, self.velocity[1] * self.friction)
         # implement bouncing back at edges
         pass
-    
+
+    def draw(self, screen):
+        # draws particle on the screen created by pygame
+        pygame.draw.circle(screen, self.color, (int(self.position[0]), int(self.position[1])), self.size)
