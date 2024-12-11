@@ -61,7 +61,7 @@ class GUI():
         pygame.draw.rect(self.screen, (30, 30, 30), (0, 0, self.screen_width, self.screen_height))
     
     
-    def control_panel(self):
+    def draw_control_panel(self):
         #this is the bar where you can adjust color and interaction. it has buttons
         pygame.draw.rect(self.screen, (20, 20, 20), (self.screen_width, 0, self.control_panel_width, self.screen_height))  #control panel
         for button in self.buttons:
