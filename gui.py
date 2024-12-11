@@ -1,4 +1,5 @@
 import pygame 
+from Simulation import Simulation
 
 class Button(): 
     def __init__(self, x, y, width, height, text, color,action=None):
@@ -41,6 +42,7 @@ class GUI():
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.control_panel_width = control_panel_width
+        self.simulation = Simulation
         self.buttons = []
         self.buttons_for_panel() 
         
@@ -51,9 +53,9 @@ class GUI():
         button_height = 50                             #button height           
 
         #buttons
-        self.buttons.append(Button(start_b, 50, button_width, button_height, "Start", (0, 200, 0), self.start_simulation))
-        self.buttons.append(Button(start_b, 120, button_width, button_height, "Pause", (200, 0, 0), self.pause_simulation))
-        self.buttons.append(Button(start_b, 190, button_width, button_height, "Reset", (0, 0, 200), self.reset))
+        self.buttons.append(Button(start_b, 50, button_width, button_height, "Start", (0, 200, 0), self.simulation.start_simulation))
+        self.buttons.append(Button(start_b, 120, button_width, button_height, "Pause", (200, 0, 0), self.simulation.pause_simulation))
+        self.buttons.append(Button(start_b, 190, button_width, button_height, "Reset", (0, 0, 200), self.simulation.reset))
 
      
     def board(self):
