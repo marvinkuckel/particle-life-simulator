@@ -14,7 +14,7 @@ class Particle:
         self.friction = friction
         self.random_movement = random_movement
 
-    def update(self):
+    def update(self, boundaries):
         # updates position based on velocity
         self.position = (self.position[0] + self.velocity[0], self.position[1] + self.velocity[1])
         # updates position based on random movement
@@ -23,7 +23,10 @@ class Particle:
         # updates velocity based on friction
         self.velocity = (self.velocity[0] * self.friction, self.velocity[1] * self.friction)
         # implement bouncing back at edges
-        pass
+        if self.position[0] < 0 or self.position[0] > boundaries[0]:
+            self.velocity = (-self.velocity[0], self.velocity[1])
+        if self.position[1] < 0 or self.position[1] > boundaries[1]:
+            self.velocity = (self.velocity[0], -self.velocity[1])
 
     def draw(self, screen):
         # draws particle on the screen created by pygame
