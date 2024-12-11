@@ -7,7 +7,9 @@ interact with the particle.py and interactions.py files to manage particle prope
 import pygame
 from particle import Particle
 from interactions import InteractionMatrix
+from particle import Particle
 import random
+
 
 class Simulation:
     def __init__(self, width, height, num_particles = 200):
@@ -16,6 +18,7 @@ class Simulation:
         self.num_particles = num_particles
         self.particles = []
         self.running = False
+        self.interaction_matrix = InteractionMatrix(number_of_types=3, interaction_radius=50)
 
     def setup_simulation(self):
         """
@@ -23,8 +26,8 @@ class Simulation:
         """
         for _ in range(self.num_particles):
             self.particles.append(Particle(
-                type=0,
-                color=(255, 255, 255),
+                type=random.randint(0, 3),       #4 different types of particles
+                color=(200, 150, 100, 50),
                 size=3,
                 position=(random.randint(0, self.width), random.randint(0, self.height)),
                 velocity=(random.uniform(-1, 1), random.uniform(-1, 1)),
@@ -44,10 +47,19 @@ class Simulation:
         Updates the state of the simulation by calculating particle interactions,
         applying rules, and updating particle positions.
         """
-        if not self.running:
-            return
         for particle in self.particles:
-            particle.update()
+            net_force = [0, 0]
+            for other in self.particles:
+                if particle != other:
+                    force = self.interaction_matrix.calculate_force(particle, other)
+                    net_force[0] += force[0]
+                    net_force[1] += force[1]
+            particle.apply_force(net_force)
+        
+        #upade particle positions
+        for particle in self.particles:
+            particle.update(boundaries=(self.width, self.height))
+
 
     def enforce_boundaries(self):
         """
