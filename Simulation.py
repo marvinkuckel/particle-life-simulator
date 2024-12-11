@@ -36,12 +36,12 @@ class Simulation:
                 random_movement=0.5
             ))
 
-    def render_frame(self, screen):
+    def render_frame(self):
         """
         Draws the current state of the simulation onto the screen.
         """
         for particle in self.particles:
-            particle.draw(screen)
+            particle.draw(self.screen)
 
     '''
     def update_simulation(self):
