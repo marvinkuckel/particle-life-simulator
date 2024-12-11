@@ -12,12 +12,13 @@ import random
 
 
 class Simulation:
-    def __init__(self, width, height, num_particles = 200):
+    def __init__(self, width, height, screen, num_particles = 200):
         self.width = width
         self.height = height
         self.num_particles = num_particles
         self.particles = []
         self.running = False
+        self.screen = screen
         #self.interaction_matrix = InteractionMatrix(number_of_types=3, interaction_radius=50)
 
     def setup_simulation(self):
