@@ -3,6 +3,7 @@ import sys
 from typing import Tuple
 
 import pygame
+from colour import Color
 
 from gui import GUI
 from simulation import Simulation
@@ -19,6 +20,9 @@ class Main:
         self.simulation.setup_simulation()
         self.gui = GUI(self.screen, self.width, self.height, control_panel_width = self.width-self.height)
         
+        colors = [Color(pick_for=t).rgb for t in range(num_types)]
+        self.colors = [[x*255 for x in color] for color in colors]
+        
     def run(self):
         self.running = True
         
@@ -31,18 +35,18 @@ class Main:
                     sys.exit()
                 self.gui.handle_triggers(event)
                 
-            # update particles    
+            # update particles
             dt = self.clock.tick(60)  # 60 frames/sec
             self.simulation.update(dt)
             
             # draw new frame
             self.screen.fill(0)
             self.gui.draw_control_panel()
-            self.simulation.render_frame(self.screen)
+            self.simulation.render_frame(self.screen, self.colors)
             
             # update window
             pygame.display.flip()
         
 if __name__ == "__main__":
-    app = Main(screen_size=(1200, 800), num_particles=20, num_types=5)
+    app = Main(screen_size=(1200, 800), num_particles=1000, num_types=5)
     app.run()

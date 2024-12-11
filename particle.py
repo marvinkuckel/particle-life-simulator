@@ -26,7 +26,6 @@ class Particle:
         self.velocity = [self.velocity[0] * (1-self.friction), 
                          self.velocity[1] * (1-self.friction)]
 
-    def draw(self, screen, screen_width, screen_height):
+    def draw(self, screen, screen_width, screen_height, colors):
         # draws particle on the screen created by pygame
-        p_color = [255*x for x in Color(pick_for=self.type).rgb]
-        pygame.draw.circle(screen, p_color, (int(self.position[0] * screen_height), int(self.position[1] * screen_height)), self.size)
+        pygame.draw.circle(screen, colors[self.type], (int(self.position[0] * screen_height), int(self.position[1] * screen_height)), self.size)

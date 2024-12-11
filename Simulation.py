@@ -36,12 +36,12 @@ class Simulation:
                                    friction=0, random_movement=0) for i in range(self.num_particles)]
         pass
 
-    def render_frame(self, screen: pygame.display):
+    def render_frame(self, screen: pygame.display, colors):
         """
         Draws the current state of the simulation onto the screen.
         """
         for p in self.particles:
-            p.draw(screen, self.width, self.height)
+            p.draw(screen, self.width, self.height, colors)
 
     def update(self, dt):
         """
