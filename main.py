@@ -15,8 +15,9 @@ class Main:
         self.screen = pygame.display.set_mode(screen_size)
         self.clock = pygame.time.Clock()
 
-        self.simulation = Simulation(self.width, self.height, num_particles)
-        self.gui = GUI(self.screen, self.width, self.height, control_panel_width=200)
+        self.simulation = Simulation(self.width, self.height, num_particles, num_types)
+        self.simulation.setup_simulation()
+        self.gui = GUI(self.screen, self.width, self.height, control_panel_width = self.width-self.height)
         
     def run(self):
         self.running = True
@@ -27,6 +28,7 @@ class Main:
                 if event.type == pygame.QUIT:
                     self.running = False
                     pygame.quit()
+                    sys.exit()
                 self.gui.handle_triggers(event)
                 
             # update particles    
@@ -42,5 +44,5 @@ class Main:
             pygame.display.flip()
         
 if __name__ == "__main__":
-    app = Main(screen_size=(800, 600), num_particles=1000, num_types=5)
+    app = Main(screen_size=(1200, 800), num_particles=20, num_types=5)
     app.run()

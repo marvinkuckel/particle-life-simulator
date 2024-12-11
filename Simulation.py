@@ -10,7 +10,7 @@ from particle import Particle
 from interactions import InteractionMatrix
 
 class Simulation:
-    def __init__(self, width, height, num_particles = 2000):
+    def __init__(self, width, height, num_particles = 2000, num_types = 4, time_factor=0.0001):
         """
         Initializes the simulation with the specified dimensions and number of particles.
 
@@ -20,16 +20,19 @@ class Simulation:
         """
         self.width = width
         self.height = height
+        self.num_particles = num_particles
+        self.num_types = num_types
+        self.time_factor = time_factor
         
         self.setup_simulation()
 
-    def setup_simulation(self, num_types: int):
+    def setup_simulation(self):
         """
         Sets up the initial state of the simulation, including creating particles.
         """
-        self.particles = [Particle(type = i % num_types, color=None, size=1, 
-                                   position=(random.random(), random.random),
-                                   velocity=(1 - random.random*2, 1 - random.random*2), 
+        self.particles = [Particle(type = i % self.num_types, color=(255,255,255), size=1, 
+                                   position=(random.random(), random.random()),
+                                   velocity=(1 - random.random()*2, 1 - random.random()*2), 
                                    friction=0, random_movement=0) for i in range(self.num_particles)]
         pass
 
@@ -38,7 +41,7 @@ class Simulation:
         Draws the current state of the simulation onto the screen.
         """
         for p in self.particles:
-            p.draw(screen)
+            p.draw(screen, self.width, self.height)
 
     def update(self, dt):
         """
@@ -46,7 +49,7 @@ class Simulation:
         applying rules, and updating particle positions.
         """
         for p in self.particles:
-            p.update()
+            p.update(dt, self.time_factor)
             
         self.enforce_boundaries()
 
