@@ -7,38 +7,47 @@ interact with the particle.py and interactions.py files to manage particle prope
 import pygame
 from particle import Particle
 from interactions import InteractionMatrix
+import random
 
 class Simulation:
-    def __init__(self, width, height, num_particles = 2000):
-        """
-        Initializes the simulation with the specified dimensions and number of particles.
-
-        width: The width of the simulation area.
-        height: The height of the simulation area.
-        num_particles: The number of particles to generate.
-        """
+    def __init__(self, width, height, num_particles = 200):
         self.width = width
         self.height = height
         self.num_particles = num_particles
+        self.particles = []
+        self.running = False
 
     def setup_simulation(self):
         """
         Sets up the initial state of the simulation, including creating particles.
         """
-        pass
+        for _ in range(self.num_particles):
+            self.particles.append(Particle(
+                type=0,
+                color=(255, 255, 255),
+                size=3,
+                position=(random.randint(0, self.width), random.randint(0, self.height)),
+                velocity=(random.uniform(-1, 1), random.uniform(-1, 1)),
+                friction=0.99,
+                random_movement=0.5
+            ))
 
-    def render_frame(self):
+    def render_frame(self, screen):
         """
         Draws the current state of the simulation onto the screen.
         """
-        pass
+        for particle in self.particles:
+            particle.draw(screen)
 
     def update_simulation(self):
         """
         Updates the state of the simulation by calculating particle interactions,
         applying rules, and updating particle positions.
         """
-        pass
+        if not self.running:
+            return
+        for particle in self.particles:
+            particle.update()
 
     def enforce_boundaries(self):
         """
