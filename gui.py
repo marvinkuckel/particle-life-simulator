@@ -71,14 +71,3 @@ class GUI():
         #Handle triggers for all buttons in the control panel.
         for button in self.buttons:
             button.trigger(event)
-    
-    
-    #i am not sure if they are right in this class, but i still added them here
-    def start_simulation(self):
-        pass
-
-    def pause_simulation(self):
-        pass
-
-    def reset(self):
-        pass

@@ -54,3 +54,13 @@ class Simulation:
         Ensures that particles stay within the defined simulation boundaries.
         """
         pass
+    
+    def start_simulation(self):
+        self.running = True
+
+    def pause_simulation(self):
+        self.running = False
+
+    def reset(self):
+        self.particles = []
+        self.setup_simulation()
