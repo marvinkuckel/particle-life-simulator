@@ -13,11 +13,12 @@ class Particle:
         self.velocity = velocity
         self.friction = friction
         self.random_movement = random_movement
-        
+    
+    '''
     def apply_force(self, force):
         #applies force to the particle
         self.velocity = (self.velocity[0] + force[0], self.velocity[1] + force[1])
-
+'''
 
     def update(self, boundaries):
         # updates position based on velocity

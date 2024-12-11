@@ -18,7 +18,7 @@ class Simulation:
         self.num_particles = num_particles
         self.particles = []
         self.running = False
-        self.interaction_matrix = InteractionMatrix(number_of_types=3, interaction_radius=50)
+        #self.interaction_matrix = InteractionMatrix(number_of_types=3, interaction_radius=50)
 
     def setup_simulation(self):
         """
@@ -42,6 +42,7 @@ class Simulation:
         for particle in self.particles:
             particle.draw(screen)
 
+    '''
     def update_simulation(self):
         """
         Updates the state of the simulation by calculating particle interactions,
@@ -57,6 +58,13 @@ class Simulation:
             particle.apply_force(net_force)
         
         #upade particle positions
+        for particle in self.particles:
+            particle.update(boundaries=(self.width, self.height))
+        '''
+
+    def update_simulation(self):
+        if not self.running:
+            return
         for particle in self.particles:
             particle.update(boundaries=(self.width, self.height))
 
