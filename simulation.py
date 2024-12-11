@@ -38,49 +38,53 @@ class Simulation:
         """
         Applies the methods to create random particles and initialize the interaction matrix.
         """
-        pass
+        self.particles = [self.create_particles() for _ in range(self.num_particles)]
     
     def create_particles(self):
         """
         Creates random particles and adds them to the simulation.
         """
-        pass
+        position = self.particle_position()
+        particle_type = random.randint(0, self.num_types - 1)  # Assign a random particle type
+        particle = Particle()
     
     def particle_position(self):
         """
         Returns a random position within the simulation area.
         """
-        pass
+        return (random.uniform(0, self.width), random.uniform(0, self.height))
 
     def define_particle_colors(self, particle_type):
         """
         Uses the dictionary of particle colors to assign a color to a particle type.
         """
-        pass
+        color_keys = list(self.color_palette.keys())
+        return self.color_palette[color_keys[particle_type % len(color_keys)]]  # Return color for the particle type, cycling if types exceed colors.
+
 
     def particle_size(self):
         """
         Returns a random size for a particle.
         """
-        pass
+        return random.uniform(1, 5)
     
     def particle_velocity(self):
         """
         Returns a random velocity for a particle.
         """
-        pass
+        return (random.uniform(-1, 1), random.uniform(-1, 1))
     
     def particle_friction(self):
         """
         Returns a random friction value for a particle to make its movement appear more natural and realistic.
         """
-        pass
+        return random.uniform(0.9, 0.99)
     
     def particle_random_movement(self):
         """
         Returns a random random movement value for a particle.
         """
-        pass
+        return random.uniform(0.1, 0.6)
 
     def initialize_interaction_matrix(self):
         """
