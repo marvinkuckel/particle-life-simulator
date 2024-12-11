@@ -1,6 +1,6 @@
-import pygame 
+import pygame
 
-class Button(): 
+class Button():
     def __init__(self, x, y, width, height, text, color,action=None):
         """
         x: X-coordinate of the button
@@ -12,7 +12,7 @@ class Button():
         """
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
-        self.color = color                      
+        self.color = color
         self.font = pygame.font.Font(None, 36)  #default font & size 
         self.action = action
 
@@ -46,9 +46,9 @@ class GUI():
         
     def buttons_for_panel(self):
         #make buttons to the control panel
-        start_b = self.screen_width + 20  #X-position in the control panel
+        start_b = self.screen_height + 20  #X-position in the control panel
         button_width = self.control_panel_width - 40   #button width
-        button_height = 50                             #button height           
+        button_height = 50                             #button height
 
         #buttons
         self.buttons.append(Button(start_b, 50, button_width, button_height, "Start", (0, 200, 0), self.start_simulation))
@@ -61,9 +61,9 @@ class GUI():
         pygame.draw.rect(self.screen, (30, 30, 30), (0, 0, self.screen_width, self.screen_height))
     
     
-    def control_panel(self):
+    def draw_control_panel(self):
         #this is the bar where you can adjust color and interaction. it has buttons
-        pygame.draw.rect(self.screen, (20, 20, 20), (self.screen_width, 0, self.control_panel_width, self.screen_height))  #control panel
+        pygame.draw.rect(self.screen, (30, 30, 40), (self.screen_height, 0, self.control_panel_width, self.screen_height))  #control panel
         for button in self.buttons:
             button.draw_button(self.screen)   #draw rthe buttons in buttons list
             
