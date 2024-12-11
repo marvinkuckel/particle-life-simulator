@@ -11,7 +11,7 @@ def main():
     pygame.display.set_caption("Particle Life Simulator")
 
     #Simulation & GUI
-    simulation = Simulation(screen_width, screen_height)
+    simulation = Simulation(screen_width, screen_height, screen)
     gui = GUI(screen, screen_width, screen_height, control_panel_width)
 
     running = True                #while simulation is running
