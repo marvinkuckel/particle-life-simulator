@@ -13,12 +13,11 @@ class Button():
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.color = color
-        self.font = pygame.font.Font(None, 36)  # default font & size 
+        self.font = pygame.font.Font(None, 36)  # default font & size
         self.action = action
 
     def draw_button(self, screen):
-        current_color = self.color
-        pygame.draw.rect(screen, current_color, self.rect)
+        pygame.draw.rect(screen, self.color, self.rect)
 
         # button text
         text_surface = self.font.render(self.text, True, (255, 255, 255))

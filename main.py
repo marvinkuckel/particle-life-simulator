@@ -2,13 +2,16 @@ import pygame
 from typing import Tuple
 from Simulation import Simulation
 
-
 class Main:
-    def __init__(self, screen_size: Tuple[int, int] = (1200, 800)):
+    def __init__(self, screen_size: Tuple[int, int] = None):
+        pygame.init()
+        
+        if screen_size is None:
+            screen_size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+        
         self.width, self.height = screen_size
 
-        pygame.init()
-        self.screen = pygame.display.set_mode(screen_size)
+        self.screen = pygame.display.set_mode(screen_size, pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         
         self.simulation = Simulation(self.width, self.height)
@@ -42,10 +45,10 @@ class Main:
                 self.simulation.update(0.1)
 
             pygame.display.flip()
-            self.clock.tick(60)  # 60 frames/sec
+            self.clock.tick(60)
 
         pygame.quit()
 
 if __name__ == "__main__":
-    app = Main(screen_size=(1200, 800))
+    app = Main()
     app.run()

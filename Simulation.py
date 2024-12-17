@@ -5,7 +5,7 @@ from interactions import InteractionMatrix
 from gui import GUI
 
 class Simulation:
-    def __init__(self, width, height, num_particles = 1000, num_types = 4, time_factor = 0.0001):
+    def __init__(self, width, height, num_particles = 1000, num_types = 4, time_factor = 0.001):
         self.width = width
         self.height = height
         self.num_particles = num_particles
@@ -32,7 +32,7 @@ class Simulation:
                 color = self.type_colors[i % len(self.type_colors)],
                 size = 1,
                 position = (random.random(), random.random()),
-                velocity = (1 - random.random() * 2, 1 - random.random() * 2),
+                velocity = (2 - random.random() * 4, 2 - random.random() * 4),
                 friction = 0,
                 random_movement = 0,
             )
@@ -62,8 +62,18 @@ class Simulation:
 
     def enforce_boundaries(self):
         for p in self.particles:
-            if p.position[0] < 0 or p.position[0] > 1:
+            if p.position[0] < 0:
+                p.position[0] = 0
                 p.velocity[0] = -p.velocity[0]
 
-            if p.position[1] < 0 or p.position[1] > 1:
+            elif p.position[0] > 1:
+                p.position[0] = 1
+                p.velocity[0] = -p.velocity[0]
+
+            if p.position[1] < 0:
+                p.position[1] = 0
+                p.velocity[1] = -p.velocity[1]
+
+            elif p.position[1] > 1:
+                p.position[1] = 1
                 p.velocity[1] = -p.velocity[1]

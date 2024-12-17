@@ -1,5 +1,3 @@
-### particle.py
-
 import random  # for random number generation
 import pygame  # for creating a window, graphics, handling events etc.
 
@@ -19,8 +17,10 @@ class Particle:
         self.position = [self.position[0] + self.velocity[0] * dt * time_factor, 
                         self.position[1] + self.velocity[1] * dt * time_factor]
         # updates position based on random movement
-        self.position = [self.position[0] + random.uniform(-self.random_movement, self.random_movement) * time_factor,
-                        self.position[1] + random.uniform(-self.random_movement, self.random_movement) * time_factor]
+        if self.random_movement != 0:
+            rand_x = random.uniform(-self.random_movement, self.random_movement) * time_factor
+            rand_y = random.uniform(-self.random_movement, self.random_movement) * time_factor
+            self.position = [self.position[0] + rand_x, self.position[1] + rand_y]
         # updates velocity based on friction
         self.velocity = [self.velocity[0] * (1 - self.friction), 
                         self.velocity[1] * (1 - self.friction)]
