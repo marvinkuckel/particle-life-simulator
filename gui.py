@@ -1,4 +1,5 @@
 import pygame
+from Simulation import *
 
 class Button():
     def __init__(self, x, y, width, height, text, color, action=None):
@@ -49,8 +50,12 @@ class GUI():
 
         # buttons
         self.buttons.append(Button(button_x, button_y, button_width, button_height, "Start", (50, 86, 50), self.start_simulation))
-        self.buttons.append(Button(button_x, button_y + 60, button_width, button_height, "Pause", (211, 171, 130), self.pause_simulation))
+        self.buttons.append(Button(button_x, button_y + 60, button_width, button_height, "Stop", (211, 171, 130), self.stop_simulation))
         self.buttons.append(Button(button_x, button_y + 120, button_width, button_height, "Reset", (123, 169, 191), self.reset))
+
+    def stop_simulation(self):
+        print("Simulation stopped")
+        self.screen.simulation.stopped_simulation()
 
     def draw_control_panel(self):
         # this is the bar where you can adjust color and interaction, it has buttons
@@ -66,7 +71,7 @@ class GUI():
     def start_simulation(self):
         print("Simulation started")
 
-    def pause_simulation(self):
+    def stop_simulation(self):
         print("Simulation paused")
 
     def reset(self):
@@ -84,7 +89,7 @@ class GUI():
 
         font = pygame.font.Font(None, 36)
         text_start = font.render("Start", True, (255, 255, 255))
-        text_pause = font.render("Pause", True, (255, 255, 255))
+        text_pause = font.render("Stop", True, (255, 255, 255))
         text_reset = font.render("Reset", True, (255, 255, 255))
 
         screen.blit(text_start, (button_x + 10, button_y + 10))

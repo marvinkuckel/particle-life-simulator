@@ -25,7 +25,10 @@ class Simulation:
 
         self.gui = GUI(screen = None, screen_width = self.width, screen_height = self.height, control_panel_width = self.width * 0.333)
 
+        self.stopped = False
+
     def start_simulation(self):
+        self.paused = False
         self.particles = [
             Particle(
                 type = i % self.num_types,
@@ -38,6 +41,9 @@ class Simulation:
             )
             for i in range(self.num_particles)
         ]
+    
+    def stop_simulation(self):
+        self.stoppped = True
 
     def render_frame(self, screen: pygame.display):
         control_panel_width = self.width * 0.333
@@ -55,10 +61,11 @@ class Simulation:
         self.gui.draw_buttons(screen, control_panel_width)
 
     def update(self, dt):
-        for p in self.particles:
-            p.update(dt, self.time_factor)
-            if p.position[0] > (self.width - (self.width * 0.3)) / self.width:
-                p.velocity[0] = -p.velocity[0]
+        if not self.stopped:
+            for p in self.particles:
+                p.update(dt, self.time_factor)
+                if p.position[0] > (self.width - (self.width * 0.3)) / self.width:
+                    p.velocity[0] = -p.velocity[0]
 
     def enforce_boundaries(self):
         for p in self.particles:

@@ -17,24 +17,32 @@ class Main:
         self.simulation = Simulation(self.width, self.height)
         self.running = True
         self.started = False
+        self.control_panel_width = self.width * 0.333
 
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.button_click()
+                self.button_click(event)
 
-    def button_click(self):
+    def button_click(self, event):
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        button_x = self.width - self.width * 0.333 + 20
-        button_y = 50
-        button_width = self.width * 0.333 - 40
+        start_button_x = self.width - self.control_panel_width + 20
+        start_button_y = 50
+        button_width = self.control_panel_width - 40
         button_height = 50
-        if button_x < mouse_x < button_x + button_width and button_y < mouse_y < button_y + button_height:
+        stop_button_y = 110
+
+        if start_button_x < mouse_x < start_button_x + button_width and start_button_y < mouse_y < start_button_y + button_height:
             if not self.started:
                 self.simulation.start_simulation()
                 self.started = True
+
+        elif start_button_x < mouse_x < start_button_x + button_width and stop_button_y < mouse_y < stop_button_y + button_height:
+            if self.started:
+                self.simulation.stop_simulation()
+                self.started = False
 
     def run(self):
         while self.running:
