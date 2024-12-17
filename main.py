@@ -33,16 +33,24 @@ class Main:
         button_width = self.control_panel_width - 40
         button_height = 50
         stop_button_y = 110
+        reset_button_y = 170
 
+        # Start-Button
         if start_button_x < mouse_x < start_button_x + button_width and start_button_y < mouse_y < start_button_y + button_height:
             if not self.started:
                 self.simulation.start_simulation()
                 self.started = True
 
+        # Stop-Button
         elif start_button_x < mouse_x < start_button_x + button_width and stop_button_y < mouse_y < stop_button_y + button_height:
             if self.started:
                 self.simulation.stop_simulation()
                 self.started = False
+        
+        # Reset-Button
+        elif start_button_x < mouse_x < start_button_x + button_width and reset_button_y < mouse_y < reset_button_y + button_height:
+            self.simulation.reset_simulation()
+            self.started = False
 
     def run(self):
         while self.running:

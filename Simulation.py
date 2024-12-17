@@ -29,25 +29,26 @@ class Simulation:
 
     def start_simulation(self):
         if self.paused:
-            print("Simulation resumed")
             self.paused = False
         else:
-            print("Simulation started")
             self.particles = [
                 Particle(
-                    type=i % self.num_types,
-                    color=self.type_colors[i % len(self.type_colors)],
-                    size=1,
-                    position=(random.random(), random.random()),
-                    velocity=(2 - random.random() * 4, 2 - random.random() * 4),
-                    friction=0,
-                    random_movement=0,
+                    type = i % self.num_types,
+                    color = self.type_colors[i % len(self.type_colors)],
+                    size = 1,
+                    position = (random.random(), random.random()),
+                    velocity = (2 - random.random() * 4, 2 - random.random() * 4),
+                    friction = 0,
+                    random_movement = 0,
                 )
                 for i in range(self.num_particles)
             ]
 
     def stop_simulation(self):
-        print("Simulation paused")
+        self.paused = True
+
+    def reset_simulation(self):
+        self.particles = []
         self.paused = True
 
     def render_frame(self, screen: pygame.display):
