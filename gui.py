@@ -42,40 +42,25 @@ class GUI():
         self.buttons_for_panel()
 
     def buttons_for_panel(self):
-        # make buttons to the control panel
+        # Make buttons for the control panel
         button_width = self.control_panel_width - 40  # button width
         button_height = 50  # button height
         button_x = self.screen_width - self.control_panel_width + 20
         button_y = 50
 
-        # buttons
+        # Add buttons to the panel
         self.buttons.append(Button(button_x, button_y, button_width, button_height, "Start", (50, 86, 50), self.start_simulation))
         self.buttons.append(Button(button_x, button_y + 60, button_width, button_height, "Stop", (211, 171, 130), self.stop_simulation))
         self.buttons.append(Button(button_x, button_y + 120, button_width, button_height, "Reset", (123, 169, 191), self.reset))
 
     def stop_simulation(self):
-        print("Simulation stopped")
-        self.screen.simulation.stopped_simulation()
-
-    def draw_control_panel(self):
-        # this is the bar where you can adjust color and interaction, it has buttons
-        pygame.draw.rect(self.screen, (30, 30, 40), (self.screen_width - self.control_panel_width, 0, self.control_panel_width, self.screen_height))  # control panel
-        for button in self.buttons:
-            button.draw_button(self.screen)  # draw the buttons in buttons list
-
-    def handle_triggers(self, event):
-        # handle triggers for all buttons in the control panel
-        for button in self.buttons:
-            button.trigger(event)
+        self.screen.simulation.stop_simulation()
 
     def start_simulation(self):
-        print("Simulation started")
-
-    def stop_simulation(self):
-        print("Simulation paused")
+        self.screen.simulation.start_simulation()
 
     def reset(self):
-        print("Simulation reseted")
+        pass
 
     def draw_buttons(self, screen, control_panel_width):
         button_width = control_panel_width - 40
@@ -89,9 +74,9 @@ class GUI():
 
         font = pygame.font.Font(None, 36)
         text_start = font.render("Start", True, (255, 255, 255))
-        text_pause = font.render("Stop", True, (255, 255, 255))
+        text_stop = font.render("Stop", True, (255, 255, 255))
         text_reset = font.render("Reset", True, (255, 255, 255))
 
         screen.blit(text_start, (button_x + 10, button_y + 10))
-        screen.blit(text_pause, (button_x + 10, button_y + 70))
+        screen.blit(text_stop, (button_x + 10, button_y + 70))
         screen.blit(text_reset, (button_x + 10, button_y + 130))

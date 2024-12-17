@@ -16,7 +16,7 @@ class Simulation:
             'christmas-green': (0, 128, 0),
             'christmas-white': (255, 255, 255),
             'christmas-gold': (255, 215, 0),
-                                }
+        }
         self.type_colors = [color for color in self.particle_colors.values()]
         self.type_colors *= (self.num_types // len(self.type_colors)) + 1
         self.type_colors = self.type_colors[:self.num_types]
@@ -25,25 +25,30 @@ class Simulation:
 
         self.gui = GUI(screen = None, screen_width = self.width, screen_height = self.height, control_panel_width = self.width * 0.333)
 
-        self.stopped = False
+        self.paused = False
 
     def start_simulation(self):
-        self.paused = False
-        self.particles = [
-            Particle(
-                type = i % self.num_types,
-                color = self.type_colors[i % len(self.type_colors)],
-                size = 1,
-                position = (random.random(), random.random()),
-                velocity = (2 - random.random() * 4, 2 - random.random() * 4),
-                friction = 0,
-                random_movement = 0,
-            )
-            for i in range(self.num_particles)
-        ]
-    
+        if self.paused:
+            print("Simulation resumed")
+            self.paused = False
+        else:
+            print("Simulation started")
+            self.particles = [
+                Particle(
+                    type=i % self.num_types,
+                    color=self.type_colors[i % len(self.type_colors)],
+                    size=1,
+                    position=(random.random(), random.random()),
+                    velocity=(2 - random.random() * 4, 2 - random.random() * 4),
+                    friction=0,
+                    random_movement=0,
+                )
+                for i in range(self.num_particles)
+            ]
+
     def stop_simulation(self):
-        self.stoppped = True
+        print("Simulation paused")
+        self.paused = True
 
     def render_frame(self, screen: pygame.display):
         control_panel_width = self.width * 0.333
@@ -61,7 +66,7 @@ class Simulation:
         self.gui.draw_buttons(screen, control_panel_width)
 
     def update(self, dt):
-        if not self.stopped:
+        if not self.paused:
             for p in self.particles:
                 p.update(dt, self.time_factor)
                 if p.position[0] > (self.width - (self.width * 0.3)) / self.width:
