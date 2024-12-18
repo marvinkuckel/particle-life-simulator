@@ -1,10 +1,7 @@
 import sys
-
 from typing import Tuple
-
 import pygame
 from colour import Color
-
 from gui import GUI
 from simulation import Simulation
 
