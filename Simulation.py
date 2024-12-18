@@ -28,9 +28,7 @@ class Simulation:
         self.paused = False
 
     def start_simulation(self):
-        if self.paused:
-            self.paused = False
-        else:
+        if len(self.particles) == 0:
             self.particles = [
                 Particle(
                     type = i % self.num_types,
@@ -43,6 +41,7 @@ class Simulation:
                 )
                 for i in range(self.num_particles)
             ]
+            self.paused = False
 
     def stop_simulation(self):
         self.paused = True
