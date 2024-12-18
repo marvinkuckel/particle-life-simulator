@@ -5,11 +5,16 @@ import pygame
 from colour import Color
 from gui import GUI
 from simulation import Simulation
+
 =======
 import pygame
 from typing import Tuple
+<<<<<<< HEAD:main.py
 from Simulation import Simulation
 >>>>>>> 70ebcb30f2af92eee9137329a0f3e7122487b3b5
+=======
+from simulation import Simulation
+>>>>>>> 96722d1c6ef946d028869d8a87838c22a42918cc:src/main.py
 
 class Main:
     def __init__(self, screen_size: Tuple[int, int] = None):
