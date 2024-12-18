@@ -1,6 +1,6 @@
 import pygame
 from typing import Tuple
-from Simulation import Simulation
+from simulation import Simulation
 
 class Main:
     def __init__(self, screen_size: Tuple[int, int] = None):

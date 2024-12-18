@@ -1,5 +1,5 @@
 import pygame
-from Simulation import *
+from simulation import *
 
 class Button():
     def __init__(self, x, y, width, height, text, color, action=None):
