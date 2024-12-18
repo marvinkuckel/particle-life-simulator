@@ -1,1 +1,1 @@
-Hier gibt es nicht´s zu sehen
+Hier gibt es nichts zu sehen.
