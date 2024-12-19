@@ -66,6 +66,10 @@ class Main:
             self.simulation.reset_simulation()
             self.started = False
 
+        # Exit-Button
+        elif start_button_x < mouse_x < start_button_x + button_width and reset_button_y + 60 < mouse_y < reset_button_y + 60 + button_height:
+            self.running = False
+
     def run(self):
         while self.running:
             self.screen.fill((0, 0, 0))
