@@ -5,7 +5,7 @@ from interactions import InteractionMatrix
 from gui import GUI
 
 class Simulation:
-    def __init__(self, width, height, num_particles = 1000, num_types = 4, time_factor = 0.001):
+    def __init__(self, width, height, num_particles = 10000, num_types = 4, time_factor = 0.01):
         self.width = width
         self.height = height
         self.num_particles = num_particles
@@ -22,13 +22,14 @@ class Simulation:
         self.type_colors = self.type_colors[:self.num_types]
 
         self.particles = []
+        self.saved_particles = []
 
         self.gui = GUI(screen = None, screen_width = self.width, screen_height = self.height, control_panel_width = self.width * 0.333)
 
         self.paused = False
 
     def start_simulation(self):
-        if len(self.particles) == 0:
+        if len(self.particles) == 0:  # no particles on the screen
             self.particles = [
                 Particle(
                     type = i % self.num_types,
@@ -42,12 +43,19 @@ class Simulation:
                 for i in range(self.num_particles)
             ]
             self.paused = False
+        else:  # particles (already) on the screen
+            self.paused = False
+            for i, p in enumerate(self.particles):
+                p.position = self.saved_particles[i]['position']
+                p.velocity = self.saved_particles[i]['velocity']
 
     def stop_simulation(self):
         self.paused = True
+        self.saved_particles = [{'position': p.position, 'velocity': p.velocity} for p in self.particles]
 
     def reset_simulation(self):
         self.particles = []
+        self.saved_particles = []
         self.paused = True
 
     def render_frame(self, screen: pygame.display):
