@@ -9,7 +9,6 @@ from simulation import Simulation
 
 import pygame
 from typing import Tuple
-from Simulation import Simulation
 
 
 class Main:
