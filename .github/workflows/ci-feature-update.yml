@@ -1,0 +1,30 @@
+name: CI for Feature Update Branch
+
+on:
+  push:
+    branches:
+      - feature-update  # Workflow wird bei jedem Push zu `feature-update` ausgelöst
+  pull_request:
+    branches:
+      - feature-update  # Workflow wird bei PRs, die `feature-update` betreffen, ausgelöst
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest
