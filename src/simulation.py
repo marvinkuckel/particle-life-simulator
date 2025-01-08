@@ -77,7 +77,7 @@ class Simulation:
         if not self.paused:
             for p in self.particles:
                 p.update(dt, self.time_factor)
-                if p.position[0] > (self.width - (self.width * 0.3)) / self.width:
+                if p.position[0] > (self.width - (self.width * 0.0)) / self.width:
                     p.velocity[0] = -p.velocity[0]
 
     def enforce_boundaries(self):
