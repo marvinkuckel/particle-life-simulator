@@ -1,60 +1,46 @@
-from typing import Dict
+import random
+
 from particle import Particle
 
 class InteractionMatrix:
-    matrix: dict[(int, int), float]
+    interactions: dict[(int, int), float]
 
-    def __init__(self, number_of_types: int, interaction_radius: float, display_width: float = None, display_height: float = None):
-        self.default_interaction_radius = interaction_radius
-        self.matrix = {}
-        self.display_width = display_width
-        self.display_height = display_height
-        for i in range(number_of_types):
-            for j in range(number_of_types):
-                self.matrix[i, j] = [0, interaction_radius]  # force, radius
-
+    def __init__(self, number_of_types: int, default_interaction_radius: float):
+        self.default_interaction_radius = default_interaction_radius
+        
+        self.interactions = {
+            (i, j): [random.choice((1, -1))*0.5, self.default_interaction_radius]
+            for i in range(number_of_types)
+            for j in range(number_of_types)
+        }
+        
     def calculate_force(self, p1: Particle, p2: Particle):
-        if p1 is not p2:
-            interaction = self.matrix[p1.type, p2.type]
-            dx = p2.x - p1.x
-            dy = p2.y - p1.y
-            distance_sq = dx**2 + dy**2
-            
-            if distance_sq < interaction[1]**2:  # d < interaction_radius
-                inv_distance_sq = interaction[0] / distance_sq
-                x_force = dx * inv_distance_sq
-                y_force = dy * inv_distance_sq
-                return x_force, y_force
-
-    def _distance(self, p1: Particle, p2: Particle):
-        return ((p1.x - p2.x)**2 + (p1.y - p2.y)**2)**0.5
-
-    def _add_type(self):
-        current_number_of_types = max(self.matrix.keys())[0] + 1
-        for i in range(current_number_of_types):
-            self.matrix[i, current_number_of_types] = [0, self.default_interaction_radius]
-            self.matrix[current_number_of_types, i] = [0, self.default_interaction_radius] # symmetric matrix
-
-    def _remove_type(self):
-        highest_type_index = max(self.matrix.keys())[0]
-        to_remove = [key for key in list(self.matrix.keys()) if highest_type_index in key]
-        for key in to_remove:
-            del self.matrix[key]
-
-    def apply_border_collision(self, p: Particle):
-        """Prüft, ob das Partikel den Rand des Displays erreicht hat und sorgt für Abprallen."""
-        if p.x <= 0 or p.x >= self.display_width:  # Überprüft die X-Achse
-            p.vx *= -1  # Geschwindigkeit in X-Richtung umkehren
-        if p.y <= 0 or p.y >= self.display_height:  # Überprüft die Y-Achse
-            p.vy *= -1  # Geschwindigkeit in Y-Richtung umkehren
-
-    def apply_attraction(self, p1: Particle, p2: Particle, attraction_strength: float):
-        """Berechnet die Anziehungskraft zwischen zwei Partikeln."""
-        distance = self._distance(p1, p2)
-        if distance < 100:  # Beispiel: nur Anziehung wenn Partikel nahe genug sind
-            force = attraction_strength / distance**2
-            # Anziehungskraft in Richtung des anderen Partikels anwenden
-            fx = (p2.x - p1.x) * force
-            fy = (p2.y - p1.y) * force
-            return fx, fy
+        force, radius = self.interactions[p1.type, p2.type]
+        
+        distance = self._distance(p1.position, p2.position)
+        if distance <= radius:
+            if distance > 0.005:
+                applied_force = (force / distance**2)-force# if distance < 1 else (force * distance**3)
+                x_force = (p2.position[0] - p1.position[0]) * applied_force
+                y_force = (p2.position[1] - p1.position[1]) * applied_force
+            else:
+                applied_force = 1 / ((distance+0.000001)**(distance))
+                x_force = -(p2.position[0] - p1.position[0]) * applied_force
+                y_force = -(p2.position[1] - p1.position[1]) * applied_force
+            return x_force, y_force
         return 0, 0
+
+    def _distance(self, p1_pos, p2_pos):
+        return ((p2_pos[0] - p1_pos[0])**2 + (p2_pos[1] - p1_pos[1])**2)**0.5
+
+    # def _add_type(self):
+    #     current_number_of_types = max(self.interactions.keys())[0] + 1
+    #     for i in range(current_number_of_types):
+    #         self.interactions[i, current_number_of_types] = [0, self.default_interaction_radius]
+    #         self.interactions[current_number_of_types, i] = [0, self.default_interaction_radius] # symmetric matrix
+
+    # def _remove_type(self):
+    #     highest_type_index = max(self.interactions.keys())[0]
+    #     to_remove = [key for key in list(self.interactions.keys()) if highest_type_index in key]
+    #     for key in to_remove:
+    #         del self.interactions[key]
