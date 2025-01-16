@@ -3,35 +3,37 @@ import random
 from particle import Particle
 
 class InteractionMatrix:
-    interactions: dict[(int, int), float]
-
-    def __init__(self, number_of_types: int, default_interaction_radius: float):
-        self.default_interaction_radius = default_interaction_radius
-        
+    def __init__(self, num_types: int, default_radius: float, attraction_strength: float = 0.01):
+        self.default_radius = default_radius
+        self.attraction_strength = attraction_strength  # Stärke der Anziehungskraft
         self.interactions = {
-            (i, j): [random.choice((1, -1))*0.5, self.default_interaction_radius]
-            for i in range(number_of_types)
-            for j in range(number_of_types)
+            (i, j): [random.choice((1, -1)) * 0.5, self.default_radius]
+            for i in range(num_types) for j in range(num_types)
         }
-        
-    def calculate_force(self, p1: Particle, p2: Particle):
+
+    def calculate_force(self, p1, p2):
+        # Berechnet die Anziehungskraft oder Abstoßung zwischen den Partikeln
         force, radius = self.interactions[p1.type, p2.type]
-        
         distance = self._distance(p1.position, p2.position)
-        if distance <= radius:
-            if distance > 0.005:
-                applied_force = (force / distance**2)-force# if distance < 1 else (force * distance**3)
-                x_force = (p2.position[0] - p1.position[0]) * applied_force
-                y_force = (p2.position[1] - p1.position[1]) * applied_force
-            else:
-                applied_force = 1 / ((distance+0.000001)**(distance))
-                x_force = -(p2.position[0] - p1.position[0]) * applied_force
-                y_force = -(p2.position[1] - p1.position[1]) * applied_force
+        
+        if distance <= radius and distance > 0.005:
+            # Anziehungskraft Berechnung (vereinfachtes Gravitationsgesetz)
+            # G * m1 * m2 / r^2 - hier verwenden wir die `size` als `m1` und `m2` und einen konstanten Anziehungsfaktor.
+            attraction_force = self.attraction_strength * p1.size * p2.size / (distance ** 2)
+            
+            # Anziehungskraft wird auf den Abstand angewendet
+            applied_force = force + attraction_force
+            
+            # Berechnet die Richtung der Kraft basierend auf dem Abstand
+            x_force = (p2.position[0] - p1.position[0]) * applied_force
+            y_force = (p2.position[1] - p1.position[1]) * applied_force
             return x_force, y_force
+        
         return 0, 0
 
-    def _distance(self, p1_pos, p2_pos):
-        return ((p2_pos[0] - p1_pos[0])**2 + (p2_pos[1] - p1_pos[1])**2)**0.5
+    @staticmethod
+    def _distance(p1_pos, p2_pos):
+        return ((p2_pos[0] - p1_pos[0]) ** 2 + (p2_pos[1] - p1_pos[1]) ** 2) ** 0.5
 
     # def _add_type(self):
     #     current_number_of_types = max(self.interactions.keys())[0] + 1

@@ -3,7 +3,7 @@ from particle import Particle
 from interactions import InteractionMatrix
 
 class Simulation:
-    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles = 1000, num_types = 4, time_factor = 0.01):
+    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles = 1000, num_types = 4, time_factor = 0.1):
         self.width, self.height = width, height
         
         self.num_particles = num_particles
