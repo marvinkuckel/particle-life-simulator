@@ -3,6 +3,7 @@ from typing import Tuple
 
 import pygame
 
+
 from gui import GUI
 from interactions import InteractionMatrix
 from simulation import Simulation
