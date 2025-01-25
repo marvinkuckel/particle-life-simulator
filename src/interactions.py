@@ -1,5 +1,7 @@
 import random
 from particle import Particle
+from interaction_matrix import InteractionMatrix
+
 
 # src/particle.py
 
@@ -43,8 +45,7 @@ class InteractionMatrix:
 
 # tests/test_interaction_matrix.py
 import pytest
-from src.interaction_matrix import InteractionMatrix
-from src.particle import Particle
+
 
 def test_calculate_force_no_interaction():
     interaction_matrix = InteractionMatrix(num_types=4, default_radius=0.05)

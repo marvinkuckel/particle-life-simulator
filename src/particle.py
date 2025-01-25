@@ -10,6 +10,7 @@ class Particle:
         self.friction = friction
         self.random_movement = random_movement
 
+
     def apply_force(self, force_x, force_y, scaling = 0.01):
         self.velocity = [self.velocity[0] + force_x*scaling, self.velocity[1] + force_y*scaling]
 
