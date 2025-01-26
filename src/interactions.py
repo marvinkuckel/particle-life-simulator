@@ -12,6 +12,8 @@ class Particle:
         self.position = position  # Position des Partikels als Tupel (x, y)
 
 
+# src/interaction_matrix.py
+
 class InteractionMatrix:
     def __init__(self, num_types: int, default_radius: float):
         self.default_radius = default_radius
@@ -32,10 +34,16 @@ class InteractionMatrix:
         distance = self._distance(p1.position, p2.position)
 
         if distance <= radius:
-            applied_force = (force / distance ** 2) - attraction  # Anziehende Kraft anwenden
+            if distance > 0.005:  # Verhindert Division durch zu kleine Distanz
+                applied_force = (force / distance ** 2) - attraction
+            else:
+                # Setze einen minimalen Wert für die Distanz, um Division durch Null zu vermeiden
+                applied_force = (force / (0.0001 ** 2)) - attraction
+
             x_force = (p2.position[0] - p1.position[0]) * applied_force
             y_force = (p2.position[1] - p1.position[1]) * applied_force
             return x_force, y_force
+
         return 0, 0
 
     @staticmethod
@@ -66,4 +74,3 @@ def test_calculate_force_with_interaction():
     force_x, force_y = interaction_matrix.calculate_force(p1, p2)
     assert force_x != 0
     assert force_y != 0
-
