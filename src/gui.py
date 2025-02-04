@@ -33,6 +33,43 @@ class Button():
                 if self.action:  # if there is an action, ...
                     self.action()  # trigger it.
 
+class InteractionsInterface:
+    class Field:
+        def __init__(self, id: Tuple[int, int], relative_posititon: Tuple[int, int], size: int):
+            self.id = id
+            self.rect = pygame.Rect(relative_posititon, (size, size))
+        
+        def draw(self, surface: pygame.Surface, interaction_matrix: dict):
+            interaction_value = interaction_matrix[self.id][0]
+            color = (0, 255*interaction_value, 0) if interaction_value > 0 else (255*abs(interaction_value), 0, 0)
+            pygame.draw.rect(surface, color, self.rect)
+            
+            
+    def __init__(self, relative_position, panel_size, padding, interaction_matrix):
+        self.relative_position = relative_position
+        self.panel_size = panel_size
+        self.padding = padding
+        self.interaction_matrix = interaction_matrix
+        
+        self.initiate_fields()
+        
+    def initiate_fields(self):
+        number_of_types = self.interaction_matrix.number_of_types
+        self.fields = dict()
+        field_size = (self.panel_size - 2*self.padding) / number_of_types
+        
+        for i in range(number_of_types):
+            for j in range(number_of_types):
+                position = [self.relative_position[0] + j*field_size, 
+                            self.relative_position[1] + i*field_size]
+                self.fields[(i, j)] = self.Field((i, j), relative_posititon = position, size=field_size)
+                
+    def draw(self, surface):
+        fields = list(self.fields.values())
+        for field in fields:
+            field.draw(surface, self.interaction_matrix.interactions)
+        
+
 class GUI:
     colors = {
             'simulation-background': (20, 20, 25),
@@ -54,6 +91,7 @@ class GUI:
         
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
+        self.interactions_interface = InteractionsInterface(self.buttons[-1].rect.bottomleft, self.control_panel_width, 60, interaction_matrix)
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
@@ -84,6 +122,8 @@ class GUI:
         
         for button in self.buttons:
             button.draw(self.screen)
+            
+        self.interactions_interface.draw(self.screen)
             
     def draw_particles(self, particles):
         # reset canvas of simulation area

@@ -57,5 +57,5 @@ class Main:
             pygame.display.flip()
 
 if __name__ == "__main__":
-    app = Main(n_particles=300, window_size=(1920, 1080))
+    app = Main(n_particles=200)
     app.run(fps=30)

@@ -6,6 +6,7 @@ class InteractionMatrix:
     interactions: dict[(int, int), float]
 
     def __init__(self, number_of_types: int, default_interaction_radius: float):
+        self.number_of_types = number_of_types
         self.default_interaction_radius = default_interaction_radius
         
         self.interactions = {
