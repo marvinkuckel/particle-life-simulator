@@ -17,7 +17,7 @@ class Simulation:
             Particle(position=(random.uniform(0, 1), random.uniform(0, 1)),
                      velocity=(random.uniform(-1, 1), random.uniform(-1, 1)),
                      type=i % self.num_types,
-                     size=1, friction=0.1, random_movement=0)
+                     size=3, friction=0.1, random_movement=0)
             for i in range(self.num_particles)
         ]
         assert all(isinstance(p, Particle) for p in particles), "Fehler: Nicht alle Partikel sind korrekt initialisiert!"
