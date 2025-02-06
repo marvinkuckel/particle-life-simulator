@@ -10,7 +10,7 @@ class InteractionMatrix:
         self.default_interaction_radius = default_interaction_radius
         
         self.interactions = {
-            (i, j): [random.choice((1, -1))*0.5, self.default_interaction_radius]
+            (i, j): [random.choice((1, -1))*random.choice((0, 0.2, 0.4, 0.6, 0.8, 1)), self.default_interaction_radius]
             for i in range(number_of_types)
             for j in range(number_of_types)
         }

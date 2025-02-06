@@ -45,29 +45,55 @@ class InteractionsInterface:
             pygame.draw.rect(surface, color, self.rect)
             
             
-    def __init__(self, relative_position, panel_size, padding, interaction_matrix):
-        self.relative_position = relative_position
-        self.panel_size = panel_size
+    def __init__(self, relative_position, panel_width, padding, interaction_matrix, type_colors):
+        self.relative_position = relative_position[0]+30, relative_position[1]+10
+        self.panel_size = panel_width
         self.padding = padding
         self.interaction_matrix = interaction_matrix
+        self.type_colors = type_colors
+        
+        self.number_of_types = self.interaction_matrix.number_of_types
+        self.field_size = (self.panel_size - 2*self.padding) / (self.number_of_types+1)
         
         self.initiate_fields()
         
     def initiate_fields(self):
-        number_of_types = self.interaction_matrix.number_of_types
-        self.fields = dict()
-        field_size = (self.panel_size - 2*self.padding) / number_of_types
+        number_of_types, field_size = self.number_of_types, self.field_size
         
+        self.fields = dict()
         for i in range(number_of_types):
             for j in range(number_of_types):
-                position = [self.relative_position[0] + j*field_size, 
-                            self.relative_position[1] + i*field_size]
-                self.fields[(i, j)] = self.Field((i, j), relative_posititon = position, size=field_size)
+                # position = [self.relative_position[0] + (j+1)*field_size,
+                #             self.relative_position[1] + (i+1)*field_size]
+                # self.fields[(i, j)] = self.Field((i, j), relative_posititon = position, size = field_size)
+                self.fields[(i, j)] = pygame.Rect(self.relative_position[0] + (i+1)*field_size,
+                                                  self.relative_position[1] + (j+1)*field_size,
+                                                  field_size, field_size)
                 
     def draw(self, surface):
-        fields = list(self.fields.values())
-        for field in fields:
-            field.draw(surface, self.interaction_matrix.interactions)
+        self.__draw_type_indicators(surface)
+        for field_index, field_rect in self.fields.items():
+            interaction_value = self.interaction_matrix.interactions[field_index][0]
+            color = (0, 255*interaction_value, 0) if interaction_value > 0 else (255*abs(interaction_value), 0, 0)
+            pygame.draw.rect(surface, color, field_rect)
+    
+    def __draw_type_indicators(self, surface):
+        size = self.field_size
+        radius = self.field_size/2 - 30
+        for i, color in enumerate(self.type_colors, start=1):
+            pygame.draw.circle(surface, color, radius=radius, center=(self.relative_position[0] + i*size + size/2,
+                                                                      self.relative_position[1] + size/2))
+            pygame.draw.circle(surface, color, radius=radius, center=(self.relative_position[0] + size/2,
+                                                                      self.relative_position[1] + i*size + size/2))
+    
+    def handle_click(self, event):
+        if result := pygame.Rect(event.pos, (1,1)).collidedict(self.fields, values=True):
+            key = result[0]
+            interaction_value = self.interaction_matrix.interactions[key][0]
+            if event.button == 4 and interaction_value < 1:
+                self.interaction_matrix.interactions[key][0] = round(interaction_value + 0.1, 2)
+            if event.button == 5 and interaction_value > -1:
+                self.interaction_matrix.interactions[key][0] = round(interaction_value - 0.1, 2)
         
 
 class GUI:
@@ -91,7 +117,8 @@ class GUI:
         
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
-        self.interactions_interface = InteractionsInterface(self.buttons[-1].rect.bottomleft, self.control_panel_width, 60, interaction_matrix)
+        self.interactions_interface = InteractionsInterface((screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
+                                                            self.control_panel_width, 150, interaction_matrix, self.particle_colors)
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
@@ -111,6 +138,8 @@ class GUI:
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-darkred'], simulation_controlls['exit']))
 
     def button_click(self, event):
+        self.interactions_interface.handle_click(event)
+        
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
                 button.action()
