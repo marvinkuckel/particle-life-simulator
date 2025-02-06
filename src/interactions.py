@@ -12,6 +12,9 @@ class Particle:
         self.position = position  # Position des Partikels als Tupel (x, y)
 
 
+import random
+from math import sqrt
+
 class InteractionMatrix:
 <<<<<<< HEAD
     def __init__(self, num_types: int, default_radius: float):
@@ -28,12 +31,13 @@ class InteractionMatrix:
             self.interactions[(type1, type2)][2] = strength
             self.interactions[(type2, type1)][2] = strength  # Symmetrische Interaktion
 
-    def calculate_force(self, p1: Particle, p2: Particle):
+    def calculate_force(self, p1, p2):
         force, radius, attraction = self.interactions[p1.type, p2.type]
         distance = self._distance(p1.position, p2.position)
-
-        if distance <= radius:
-            applied_force = (force / distance ** 2) - attraction  # Anziehende Kraft anwenden
+        
+        epsilon = 1e-6  # Kleine Zahl, um Division durch Null zu vermeiden
+        if distance <= radius and distance > epsilon:
+            applied_force = (force / (distance ** 2 + epsilon)) - attraction  # Anziehende Kraft anwenden
             x_force = (p2.position[0] - p1.position[0]) * applied_force
             y_force = (p2.position[1] - p1.position[1]) * applied_force
 =======
@@ -64,10 +68,10 @@ class InteractionMatrix:
 >>>>>>> parent of 7635633 (small changes in force calculation)
             return x_force, y_force
         return 0, 0
-
+    
     @staticmethod
-    def _distance(p1_pos, p2_pos):
-        return ((p2_pos[0] - p1_pos[0]) ** 2 + (p2_pos[1] - p1_pos[1]) ** 2) ** 0.5
+    def _distance(pos1, pos2):
+        return sqrt((pos2[0] - pos1[0]) ** 2 + (pos2[1] - pos1[1]) ** 2)
 
 
 # tests/test_interaction_matrix.py
