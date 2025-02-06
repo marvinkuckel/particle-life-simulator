@@ -13,6 +13,7 @@ class Particle:
 
 
 class InteractionMatrix:
+<<<<<<< HEAD
     def __init__(self, num_types: int, default_radius: float):
         self.default_radius = default_radius
         # Erstellen der Interaktionsmatrix
@@ -35,6 +36,32 @@ class InteractionMatrix:
             applied_force = (force / distance ** 2) - attraction  # Anziehende Kraft anwenden
             x_force = (p2.position[0] - p1.position[0]) * applied_force
             y_force = (p2.position[1] - p1.position[1]) * applied_force
+=======
+    interactions: dict[(int, int), float]
+
+    def __init__(self, number_of_types: int, default_interaction_radius: float):
+        self.default_interaction_radius = default_interaction_radius
+        
+        self.interactions = {
+            (i, j): [random.choice((1, -1))*0.5, self.default_interaction_radius]
+            for i in range(number_of_types)
+            for j in range(number_of_types)
+        }
+        
+    def calculate_force(self, p1: Particle, p2: Particle):
+        force, radius = self.interactions[p1.type, p2.type]
+        
+        distance = self._distance(p1.position, p2.position)
+        if distance <= radius:
+            if distance > 0.005:
+                applied_force = (force / distance**2)-force# if distance < 1 else (force * distance**3)
+                x_force = (p2.position[0] - p1.position[0]) * applied_force
+                y_force = (p2.position[1] - p1.position[1]) * applied_force
+            else:
+                applied_force = 1 / ((distance+0.000001)**(distance))
+                x_force = -(p2.position[0] - p1.position[0]) * applied_force
+                y_force = -(p2.position[1] - p1.position[1]) * applied_force
+>>>>>>> parent of 7635633 (small changes in force calculation)
             return x_force, y_force
         return 0, 0
 
