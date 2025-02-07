@@ -1,4 +1,4 @@
-# interaction_matrix.py
+# interaction_matrix.py - erstmal nicht nutzen
 import random
 from particle import Particle
 

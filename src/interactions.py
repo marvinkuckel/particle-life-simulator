@@ -1,8 +1,8 @@
 import random
 from particle import Particle
-from interaction_matrix import InteractionMatrix
+#from interaction_matrix import InteractionMatrix - erstmal nicht mehr drauf zugreifen
 
-
+'''
 # src/particle.py
 
 class Particle:
@@ -10,6 +10,7 @@ class Particle:
         self.type = type_id  # Partikeltyp
         self.size = size  # Partikelgröße
         self.position = position  # Position des Partikels als Tupel (x, y)
+'''
 
 
 import random
