@@ -14,7 +14,7 @@ class Particle:
 
 
 import random
-from math import sqrt
+from math import sqrt, exp
 
 class InteractionMatrix:
     def __init__(self, num_types: int, default_radius: float):
@@ -30,16 +30,17 @@ class InteractionMatrix:
     def add_attraction(self, type1, type2, strength):
         #Set an attraction force between two particle types.
         #The interaction is symmetric, meaning the attraction applies in both directions.
-        if type1 != type2:  # Normalerweise ist Anziehung zwischen verschiedenen Typen
+        if type1 == type2:
+            self.interactions[(type1, type1)][2] = strength
+        else:
             self.interactions[(type1, type2)][2] = strength
             self.interactions[(type2, type1)][2] = strength 
-
+            
     def calculate_force(self, p1, p2):
         force_streng, radius, attraction = self.interactions[p1.type, p2.type]
         distance = self._distance(p1.position, p2.position)
         
-        epsilon = 1e-10   #small value to prevent division by zero
-        max_force = 0.5  #maximum force limit to prevent instability, it revents particles from moving too fast and disrupting the simulation.
+        epsilon = 1e-10   #small value to prevent division by zero or the programm crashes
         
         #compute direction and normalize the force vector
         direction_x = (p2.position[0] - p1.position[0]) / (distance + epsilon)
@@ -48,14 +49,12 @@ class InteractionMatrix:
         # Soft transition near min_distance to avoid the glitching problem
         if distance < self.min_distance:
             # Reduce force smoothly when close to the min_distance
-            scale = (distance / self.min_distance) ** 3  # 3 scaling for smooth transition
+            scale = (distance / self.min_distance) ** 2  # quadrat scaling for smooth transition
             return direction_x * scale, direction_y * scale  
 
 
-        
         if distance <= radius:
-            applied_force = (force_streng / (distance + self.smooth_factor)) - attraction  # Anziehende Kraft anwenden
-            applied_force = max(-max_force, min(applied_force, max_force))        # limit the max force
+            applied_force = force_streng / (distance ** 2 + self.smooth_factor) - attraction    
             return direction_x * applied_force, direction_y * applied_force
         return 0, 0 #no force if partikles are beyond the interaction rafius
     
