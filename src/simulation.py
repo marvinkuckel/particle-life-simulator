@@ -35,19 +35,22 @@ class Simulation:
         self.enforce_boundaries()
         
     def enforce_boundaries(self):
+        #Ensures particles do not get stuck at the borders by applying a soft repelling force.
+        wall_bounce = 0.8        #force strength to prevent sticking
         for p in self.particles:
-            if p.position[0] <= 0 or p.position[0] >= 1:
-                p.position[0] = round(p.position[0])
-                p.velocity[0] = -p.velocity[0]
+            if p.position[0] <= 0:     #if particle is at the left boundary
+                p.position[0] = 0.01   #move it a lil bit away from the boundary
+                p.velocity[0] = abs(p.velocity[0]) + wall_bounce  #reflect with a bit extra push
+            elif p.position[0] >= 1:   #if particle is at the right boundary
+                p.position[0] = 0.99   #move it a lil bit away from the boundary
+                p.velocity[0] = -abs(p.velocity[0]) - wall_bounce  #reflect with a bit extra push
                 
-            if p.position[1] <= 0 or p.position[1] >= 1:
-                p.position[1] = round(p.position[1])
-                p.velocity[1] = -p.velocity[1]
-            # if p.position[0] <= 0 or p.position[0] >= 1:
-            #     p.position[0] = abs(1 - round(p.position[0]))
-
-            # if p.position[1] <= 0 or p.position[1] >= 1:
-            #     p.position[1] = abs(round(p.position[1]) - 1)
+            if p.position[1] <= 0:     #if particle is at the top boundary
+                p.position[1] = 0.01   #move it a little bit away from the boundary
+                p.velocity[1] = abs(p.position[1]) + wall_bounce  #reflect with a bit extra push
+            elif p.position[1] >= 1:   #if particle is at the bottom boundary
+                p.position[1] = 0.99   #move it a little bit away from the boundary
+                p.velocity[1] = -abs(p.position[1]) - wall_bounce #reflect with a bit extra push
             
     def start_simulation(self):
         self.paused = False
