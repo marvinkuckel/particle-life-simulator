@@ -3,11 +3,13 @@ from math import sqrt
 
 class InteractionMatrix:
     def __init__(self, num_types: int, default_radius: float):
+        self.number_of_types = num_types
         self.default_radius = default_radius
+        choice = lambda: random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+        
         # Erstellen der Interaktionsmatrix
         self.interactions = {
-            force = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
-            (i, j): [force, self.default_radius, 1.0]  # Default strength is 1.0 (no attraction)
+            (i, j): [choice(), self.default_radius, 1.0]  # Default strength is 1.0 (no attraction)
             for i in range(num_types) for j in range(num_types)
         }
 
