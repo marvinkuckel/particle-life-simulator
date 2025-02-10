@@ -38,6 +38,7 @@ class Main:
                 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.gui.button_click(event)
+                self.gui.draw_control_panel()
 
     def run(self, fps: int):
         self.running = True
@@ -54,5 +55,5 @@ class Main:
             pygame.display.flip()
 
 if __name__ == "__main__":
-    app = Main(n_particles=300)
+    app = Main(n_particles=1000)
     app.run(fps=30)
