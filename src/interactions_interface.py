@@ -16,7 +16,7 @@ class InteractionsInterface:
           type_colors: list containing the color of each type
         """
         self.interaction_matrix = interaction_matrix
-        self.relative_position = relative_position[0]+30, relative_position[1]+10
+        self.relative_position = relative_position[0] + 2*padding - 62, relative_position[1]
         self.type_colors = type_colors
         
         # calculate how big each field has to be
@@ -82,8 +82,8 @@ class InteractionsInterface:
         """Indicating the rows and columns of InteractionMatix with corresponding colors of particle types
         """
         rel_x, rel_y = self.relative_position
-        radius = self.field_size/2 - 30  # size of indicator
-        spacing = self.field_size        # column/row size
+        radius = self.field_size * 0.2  # size of indicator
+        spacing = self.field_size       # column/row size
         
         # put center of indicator in the middle of rows/cols
         rel_x, rel_y = rel_x + spacing/2, rel_y + spacing/2

@@ -57,8 +57,8 @@ class GUI:
         
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
-        self.interactions_interface = InteractionsInterface((screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
-                                                            self.control_panel_width, 150, interaction_matrix, self.particle_colors)
+        self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
+                                                            self.control_panel_width, 200, self.particle_colors)
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
