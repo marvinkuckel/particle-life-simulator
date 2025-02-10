@@ -1,24 +1,21 @@
 import sys
-from typing import Tuple
 
 import pygame
+
 
 from gui import GUI
 from interactions import InteractionMatrix
 from simulation import Simulation
 class Main:
     
-    def __init__(self, window_size: Tuple[int, int] = None, n_particles: int = 1000, n_types: int = 4):
+    def __init__(self, n_particles: int = 1000, n_types: int = 4):
         pygame.init()
         self.clock = pygame.time.Clock()
         
-        if window_size:
-            self.width, self.height = window_size
-            self.screen = pygame.display.set_mode(window_size)
-        else:
-            self.width = pygame.display.Info().current_w
-            self.height = pygame.display.Info().current_h
-            self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN)
+        # adjusts the window size to fit the current screen resolution
+        self.width = pygame.display.Info().current_w
+        self.height = pygame.display.Info().current_h
+        self.screen = pygame.display.set_mode((self.width, self.height), pygame.SCALED)
 
         self.interaction_matrix = InteractionMatrix(n_types, 0.2)
         self.simulation = Simulation(self.width, self.height, self.interaction_matrix, n_particles)
@@ -58,5 +55,5 @@ class Main:
             pygame.display.flip()
 
 if __name__ == "__main__":
-    app = Main(n_particles=200)
+    app = Main(n_particles=300)
     app.run(fps=30)
