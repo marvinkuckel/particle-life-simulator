@@ -1,18 +1,4 @@
 import random
-from particle import Particle
-from interaction_matrix import InteractionMatrix
-
-
-# src/particle.py
-
-class Particle:
-    def __init__(self, type_id: int, size: int, position: tuple):
-        self.type = type_id  # Partikeltyp
-        self.size = size  # Partikelgröße
-        self.position = position  # Position des Partikels als Tupel (x, y)
-
-
-import random
 from math import sqrt
 
 class InteractionMatrix:
@@ -45,29 +31,3 @@ class InteractionMatrix:
     @staticmethod
     def _distance(pos1, pos2):
         return sqrt((pos2[0] - pos1[0]) ** 2 + (pos2[1] - pos1[1]) ** 2)
-
-
-# tests/test_interaction_matrix.py
-import pytest
-
-
-def test_calculate_force_no_interaction():
-    interaction_matrix = InteractionMatrix(num_types=4, default_radius=0.05)
-    p1 = Particle(type_id=0, size=2, position=(0.1, 0.1))
-    p2 = Particle(type_id=1, size=2, position=(0.1, 0.2))
-    
-    # Keine Wechselwirkung, wenn die Distanzen zu groß sind
-    force_x, force_y = interaction_matrix.calculate_force(p1, p2)
-    assert force_x == 0
-    assert force_y == 0
-
-def test_calculate_force_with_interaction():
-    interaction_matrix = InteractionMatrix(num_types=4, default_radius=0.1)
-    p1 = Particle(type_id=0, size=2, position=(0.1, 0.1))
-    p2 = Particle(type_id=1, size=2, position=(0.1, 0.15))
-    
-    # Berechnung der Wechselwirkung, wenn die Distanzen klein genug sind
-    force_x, force_y = interaction_matrix.calculate_force(p1, p2)
-    assert force_x != 0
-    assert force_y != 0
-
