@@ -38,6 +38,7 @@ class Main:
                 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.gui.button_click(event)
+                self.gui.draw_control_panel()
 
     def run(self, fps: int):
         self.running = True
