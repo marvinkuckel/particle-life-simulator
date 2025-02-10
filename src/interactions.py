@@ -1,18 +1,18 @@
 import random
-from math import sqrt, exp
+from math import sqrt
 
 class InteractionMatrix:
     def __init__(self, num_types: int, default_radius: float):
         self.number_of_types = num_types
         self.default_radius = default_radius
         choice = lambda: random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
-        self.min_distance = 0.05  #minimum allowed distance between particles (prevents touching & sticking)
-        self.smooth_factor = 0.05  #strength of the smooth force reduction
-        # creating Interaktionsmatrix
+        # Erstellen der Interaktionsmatrix
         self.interactions = {
             (i, j): [choice(), self.default_radius, 1.0]  # Default strength is 1.0 (no attraction)
             for i in range(num_types) for j in range(num_types)
         }
+        self.min_distance = 0.05  #minimum allowed distance between particles (prevents touching & sticking)
+        self.smooth_factor = 0.05  #strength of the smooth force reduction
 
     def add_attraction(self, type1, type2, strength):
         #Set an attraction force between two particle types.
@@ -47,4 +47,4 @@ class InteractionMatrix:
     
     @staticmethod
     def _distance(pos1, pos2):
-        return sqrt((pos2[0] - pos1[0]) ** 2 + (pos2[1] - pos1[1]) ** 2) #eucludien distance between the 2 points
+        return sqrt((pos2[0] - pos1[0]) ** 2 + (pos2[1] - pos1[1]) ** 2)
