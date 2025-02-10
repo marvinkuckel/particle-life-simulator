@@ -1,6 +1,8 @@
 from typing import Callable, Tuple
 import pygame
 
+from interactions_interface import InteractionsInterface
+
 class Button():
     def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None):
         """
@@ -33,6 +35,7 @@ class Button():
                 if self.action:  # if there is an action, ...
                     self.action()  # trigger it.
 
+
 class GUI:
     colors = {
             'simulation-background': (20, 20, 25),
@@ -54,6 +57,8 @@ class GUI:
         
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
+        self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
+                                                            self.control_panel_width, 200, self.particle_colors)
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
@@ -73,6 +78,8 @@ class GUI:
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-darkred'], simulation_controlls['exit']))
 
     def button_click(self, event):
+        self.interactions_interface.handle_click(event)
+        
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
                 button.action()
@@ -84,6 +91,8 @@ class GUI:
         
         for button in self.buttons:
             button.draw(self.screen)
+            
+        self.interactions_interface.draw(self.screen)
             
     def draw_particles(self, particles):
         # reset canvas of simulation area

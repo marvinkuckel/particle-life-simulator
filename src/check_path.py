@@ -1,1 +1,0 @@
-pytest tests/test_interaction_matrix.py
