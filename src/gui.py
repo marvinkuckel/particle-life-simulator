@@ -1,6 +1,8 @@
 from typing import Callable, Tuple
 import pygame
 
+from interactions_interface import InteractionsInterface
+
 class Button():
     def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None):
         """
@@ -33,68 +35,6 @@ class Button():
                 if self.action:  # if there is an action, ...
                     self.action()  # trigger it.
 
-class InteractionsInterface:
-    class Field:
-        def __init__(self, id: Tuple[int, int], relative_posititon: Tuple[int, int], size: int):
-            self.id = id
-            self.rect = pygame.Rect(relative_posititon, (size, size))
-        
-        def draw(self, surface: pygame.Surface, interaction_matrix: dict):
-            interaction_value = interaction_matrix[self.id][0]
-            color = (0, 255*interaction_value, 0) if interaction_value > 0 else (255*abs(interaction_value), 0, 0)
-            pygame.draw.rect(surface, color, self.rect)
-            
-            
-    def __init__(self, relative_position, panel_width, padding, interaction_matrix, type_colors):
-        self.relative_position = relative_position[0]+30, relative_position[1]+10
-        self.panel_size = panel_width
-        self.padding = padding
-        self.interaction_matrix = interaction_matrix
-        self.type_colors = type_colors
-        
-        self.number_of_types = self.interaction_matrix.number_of_types
-        self.field_size = (self.panel_size - 2*self.padding) / (self.number_of_types+1)
-        
-        self.initiate_fields()
-        
-    def initiate_fields(self):
-        number_of_types, field_size = self.number_of_types, self.field_size
-        
-        self.fields = dict()
-        for i in range(number_of_types):
-            for j in range(number_of_types):
-                # position = [self.relative_position[0] + (j+1)*field_size,
-                #             self.relative_position[1] + (i+1)*field_size]
-                # self.fields[(i, j)] = self.Field((i, j), relative_posititon = position, size = field_size)
-                self.fields[(i, j)] = pygame.Rect(self.relative_position[0] + (i+1)*field_size,
-                                                  self.relative_position[1] + (j+1)*field_size,
-                                                  field_size, field_size)
-                
-    def draw(self, surface):
-        self.__draw_type_indicators(surface)
-        for field_index, field_rect in self.fields.items():
-            interaction_value = self.interaction_matrix.interactions[field_index][0]
-            color = (0, 255*interaction_value, 0) if interaction_value > 0 else (255*abs(interaction_value), 0, 0)
-            pygame.draw.rect(surface, color, field_rect)
-    
-    def __draw_type_indicators(self, surface):
-        size = self.field_size
-        radius = self.field_size/2 - 30
-        for i, color in enumerate(self.type_colors, start=1):
-            pygame.draw.circle(surface, color, radius=radius, center=(self.relative_position[0] + i*size + size/2,
-                                                                      self.relative_position[1] + size/2))
-            pygame.draw.circle(surface, color, radius=radius, center=(self.relative_position[0] + size/2,
-                                                                      self.relative_position[1] + i*size + size/2))
-    
-    def handle_click(self, event):
-        if result := pygame.Rect(event.pos, (1,1)).collidedict(self.fields, values=True):
-            key = result[0]
-            interaction_value = self.interaction_matrix.interactions[key][0]
-            if event.button == 4 and interaction_value < 1:
-                self.interaction_matrix.interactions[key][0] = round(interaction_value + 0.1, 2)
-            if event.button == 5 and interaction_value > -1:
-                self.interaction_matrix.interactions[key][0] = round(interaction_value - 0.1, 2)
-        
 
 class GUI:
     colors = {
