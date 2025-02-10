@@ -6,6 +6,7 @@ class InteractionMatrix:
         self.number_of_types = num_types
         self.default_radius = default_radius
         choice = lambda: random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+        
         # Erstellen der Interaktionsmatrix
         self.interactions = {
             (i, j): [choice(), self.default_radius, 1.0]  # Default strength is 1.0 (no attraction)
