@@ -18,14 +18,17 @@ class InteractionMatrix:
     def add_attraction(self, type1, type2, strength):
         #Set an attraction force between two particle types.
         #The interaction is symmetric, meaning the attraction applies in both directions.
-        if type1 == type2:
-            self.interactions[(type1, type1)][2] = strength
-        else:
+        if type1 != type2:
             self.interactions[(type1, type2)][2] = strength
             self.interactions[(type2, type1)][2] = strength 
             
     def calculate_force(self, p1, p2):
         force_streng, radius, attraction = self.interactions[p1.type, p2.type]
+        
+        # Skip calculation if force strength is zero (no interaction) to safe time
+        if force_streng == 0:
+            return 0, 0
+        
         distance = self._distance(p1.position, p2.position)
         
         epsilon = 1e-10   #small value to prevent division by zero or the programm crashes
