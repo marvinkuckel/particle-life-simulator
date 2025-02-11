@@ -35,7 +35,6 @@ class Button():
                 if self.action:  # if there is an action, ...
                     self.action()  # trigger it.
 
-
 class GUI:
     colors = {
             'simulation-background': (20, 20, 25),
@@ -44,7 +43,8 @@ class GUI:
             'christmas-darkred': (150, 25, 30),
             'christmas-green': (0, 128, 0),
             'christmas-white': (255, 255, 255),
-            'christmas-gold': (204, 153, 1)
+            'christmas-gold': (204, 153, 1),
+            'christmas-grey': (40, 40, 50)
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict):
@@ -57,8 +57,22 @@ class GUI:
         
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
+
+        self.instruction_text = "Welcome to the Particle Life Simulator!"
+
+        self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, self.buttons[-1].rect.bottom + 180, self.control_panel_width - 20, 100)
+
         self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
                                                             self.control_panel_width, 200, self.particle_colors)
+        
+    def draw_instruction(self):
+        pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
+        pygame.draw.rect(self.screen, (255, 255, 255), self.instruction_rect, 2)
+        
+        font = pygame.font.Font(None, 23)
+        text_surface = font.render(self.instruction_text, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=self.instruction_rect.center)
+        self.screen.blit(text_surface, text_rect)
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
@@ -93,7 +107,9 @@ class GUI:
             button.draw(self.screen)
             
         self.interactions_interface.draw(self.screen)
-            
+
+        self.draw_instruction()
+ 
     def draw_particles(self, particles):
         # reset canvas of simulation area
         pygame.draw.rect(self.screen, self.colors['simulation-background'], pygame.Rect(0, 0, self.screen_height + 1, self.screen_height + 1))
