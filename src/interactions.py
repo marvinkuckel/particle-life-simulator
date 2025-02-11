@@ -12,8 +12,8 @@ class InteractionMatrix:
             (i, j): [choice(), self.default_radius, 1.0]  # Default strength is 1.0 (no attraction)
             for i in range(num_types) for j in range(num_types)
         }
-        self.min_distance = 0.05  #minimum allowed distance between particles (prevents touching & sticking)
-        self.smooth_factor = 0.05  #strength of the smooth force reduction
+        #self.min_distance = 0.05  #minimum allowed distance between particles (prevents touching & sticking)
+        #self.smooth_factor = 0.05  #strength of the smooth force reduction
 
     def add_attraction(self, type1, type2, strength):
         #Set an attraction force between two particle types.
@@ -30,24 +30,25 @@ class InteractionMatrix:
             return 0, 0
         
         distance = self._distance(p1.position, p2.position)
-        
-        epsilon = 1e-10   #small value to prevent division by zero or the programm crashes
+        min_distance = 0.02 
+        epsilon = 1e-12   #small value to prevent division by zero or the programm crashes
         
         #compute direction and normalize the force vector
         direction_x = (p2.position[0] - p1.position[0]) / (distance + epsilon)
         direction_y = (p2.position[1] - p1.position[1]) / (distance + epsilon)
-            
+        
         # Soft transition near min_distance to avoid the glitching problem
-        if distance < self.min_distance:
-            # Reduce force smoothly when close to the min_distance
-            scale = (distance / self.min_distance) ** 2  # quadrat scaling for smooth transition
-            return direction_x * scale, direction_y * scale  
+        if distance < min_distance:
+            repulsion_strength = (min_distance / (distance + epsilon)) ** 2  # Quadratic scaling for smooth repulsion
+            return direction_x * repulsion_strength, direction_y * repulsion_strength  
 
-
-        if distance <= radius:
-            applied_force = force_streng / (distance ** 2 + self.smooth_factor) - attraction    
-            return direction_x * applied_force, direction_y * applied_force
-        return 0, 0 #no force if partikles are beyond the interaction rafius
+    
+        if distance <= radius and distance > epsilon:
+                applied_force = (force_streng / (distance ** 2 + epsilon)) - attraction  # Anziehende Kraft anwenden
+                x_force = (p2.position[0] - p1.position[0]) * applied_force
+                y_force = (p2.position[1] - p1.position[1]) * applied_force
+                return x_force, y_force
+        return 0, 0
     
     @staticmethod
     def _distance(pos1, pos2):
