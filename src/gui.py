@@ -61,7 +61,7 @@ class GUI:
         self.instruction_text = (
             "Welcome to the Particle Life Simulator!\n\n"
             "Click 'Start' to activate the particles.\n"
-            "While they are moving, you can press'Stop' to pause the simulation.\n\n"
+            "While they are moving, you can press 'Stop' to pause the simulation.\n\n"
             "To clear the screen and restart, use 'Reset'.\n\n"
             "Note: 'Reset' is disabled while paused.\n\n"
             "Click 'Exit' to leave the simulation.")
@@ -77,10 +77,20 @@ class GUI:
         pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
         
         font = pygame.font.Font(None, 23)
+        header_font = pygame.font.Font(None, 36)
+        header_font.set_bold(True)
+        header_font.set_italic(True)
+
         lines = self.instruction_text.split("\n")
         y_offset = self.instruction_rect.top + 10
+
+        header_text = "Welcome to the Particle Life Simulator!"
+        header_surface = header_font.render(header_text, True, (255, 255, 255))
+        header_rect = header_surface.get_rect(midtop=(self.instruction_rect.centerx, y_offset))
+        self.screen.blit(header_surface, header_rect)
+        y_offset += header_surface.get_height() + 10
         
-        for line in lines:
+        for line in lines[1:]:
             text_surface = font.render(line, True, (255, 255, 255))
             text_rect = text_surface.get_rect(midtop=(self.instruction_rect.centerx, y_offset))
             self.screen.blit(text_surface, text_rect)
