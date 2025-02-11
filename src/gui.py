@@ -44,7 +44,7 @@ class GUI:
             'christmas-green': (0, 128, 0),
             'christmas-white': (255, 255, 255),
             'christmas-gold': (204, 153, 1),
-            'christmas-grey': (40, 40, 50)
+            'christmas-grey': (80, 90, 120)
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict):
@@ -58,21 +58,33 @@ class GUI:
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
 
-        self.instruction_text = "Welcome to the Particle Life Simulator!"
+        self.instruction_text = (
+            "Welcome to the Particle Life Simulator!\n\n"
+            "Click 'Start' to activate the particles.\n"
+            "While they are moving, you can press'Stop' to pause the simulation.\n\n"
+            "To clear the screen and restart, use 'Reset'.\n\n"
+            "Note: 'Reset' is disabled while paused.\n\n"
+            "Click 'Exit' to leave the simulation.")
 
-        self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, self.buttons[-1].rect.bottom + 180, self.control_panel_width - 20, 100)
+        self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
+            self.buttons[-1].rect.bottom + 180, self.control_panel_width - 20, 250)
 
         self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
                                                             self.control_panel_width, 200, self.particle_colors)
         
     def draw_instruction(self):
         pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
-        pygame.draw.rect(self.screen, (255, 255, 255), self.instruction_rect, 2)
+        pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
         
         font = pygame.font.Font(None, 23)
-        text_surface = font.render(self.instruction_text, True, (255, 255, 255))
-        text_rect = text_surface.get_rect(center=self.instruction_rect.center)
-        self.screen.blit(text_surface, text_rect)
+        lines = self.instruction_text.split("\n")
+        y_offset = self.instruction_rect.top + 10
+        
+        for line in lines:
+            text_surface = font.render(line, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(midtop=(self.instruction_rect.centerx, y_offset))
+            self.screen.blit(text_surface, text_rect)
+            y_offset += text_surface.get_height() + 5
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
@@ -109,7 +121,7 @@ class GUI:
         self.interactions_interface.draw(self.screen)
 
         self.draw_instruction()
- 
+            
     def draw_particles(self, particles):
         # reset canvas of simulation area
         pygame.draw.rect(self.screen, self.colors['simulation-background'], pygame.Rect(0, 0, self.screen_height + 1, self.screen_height + 1))
@@ -117,4 +129,3 @@ class GUI:
         for p in particles:
             color = self.particle_colors[p.type]
             p.draw(self.screen, self.screen_height, self.screen_height, color)
-            
