@@ -44,7 +44,8 @@ class GUI:
             'christmas-green': (0, 128, 0),
             'christmas-white': (255, 255, 255),
             'christmas-gold': (204, 153, 1),
-            'christmas-grey': (80, 90, 120)
+            'christmas-grey': (80, 90, 120),
+            'christmas-blue': (0, 30, 250),
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict):
@@ -84,11 +85,29 @@ class GUI:
         lines = self.instruction_text.split("\n")
         y_offset = self.instruction_rect.top + 10
 
-        header_text = "Welcome to the Particle Life Simulator!"
-        header_surface = header_font.render(header_text, True, (255, 255, 255))
-        header_rect = header_surface.get_rect(midtop=(self.instruction_rect.centerx, y_offset))
-        self.screen.blit(header_surface, header_rect)
-        y_offset += header_surface.get_height() + 10
+        header_parts = ["Welcome to the", "Particle", "Life", "Simulator!"]
+        
+        segment_colors = [
+            self.colors['christmas-white'],
+            self.colors['christmas-red'],
+            self.colors['christmas-gold'],
+            self.colors['christmas-green'],
+        ]
+        
+        x_offset = self.instruction_rect.centerx - sum(header_font.size(word)[0] for word in header_parts) / 2
+        
+        for idx, part in enumerate(header_parts):
+            shadow_surface = header_font.render(part, True, (0, 0, 0))
+            shadow_rect = shadow_surface.get_rect(topleft=(x_offset + 1, y_offset + 1))
+            self.screen.blit(shadow_surface, shadow_rect)
+            
+            part_surface = header_font.render(part, True, segment_colors[idx])
+            part_rect = part_surface.get_rect(topleft=(x_offset, y_offset))
+            self.screen.blit(part_surface, part_rect)
+
+            x_offset += part_surface.get_width()
+
+        y_offset += header_font.get_height() + 10
         
         for line in lines[1:]:
             text_surface = font.render(line, True, (255, 255, 255))
@@ -111,7 +130,7 @@ class GUI:
         self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
-        self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-darkred'], simulation_controlls['exit']))
+        self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
 
     def button_click(self, event):
         self.interactions_interface.handle_click(event)
