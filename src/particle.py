@@ -15,19 +15,19 @@ class Particle:
         self.velocity = [self.velocity[0] + force_x*scaling, self.velocity[1] + force_y*scaling]
 
     def update_position(self, dt, time_factor):
-        # Updates position based on velocity
-        self.position = [self.position[0] + self.velocity[0] * dt * time_factor,
-                         self.position[1] + self.velocity[1] * dt * time_factor]
+        # update velocity based on applied friction
+        self.velocity = [self.velocity[0] * (1 - self.friction),
+                        self.velocity[1] * (1 - self.friction)]
 
-        # Updates position based on random movement
+        # update position based on new velocity
+        self.position = [self.position[0] + self.velocity[0] * dt * time_factor,
+                        self.position[1] + self.velocity[1] * dt * time_factor]
+
+        # update position based on random movement
         if self.random_movement:
             rand_x = random.uniform(-self.random_movement, self.random_movement) * time_factor
             rand_y = random.uniform(-self.random_movement, self.random_movement) * time_factor
             self.position = [self.position[0] + rand_x, self.position[1] + rand_y]
-
-        # Updates velocity based on friction
-        self.velocity = [self.velocity[0] * (1 - self.friction),
-                         self.velocity[1] * (1 - self.friction)]
 
     def draw(self, screen, screen_width, screen_height, color):
         # Draws the particle on the screen
