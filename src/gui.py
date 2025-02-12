@@ -53,29 +53,34 @@ class GUI:
         self.screen_width, self.screen_height = screen_width, screen_height
         self.control_panel_width = screen_width - screen_height
         
-        self.particle_colors = [GUI.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
+        self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
         self.interaction_matrix = interaction_matrix
         
         self.buttons = []
         self.initiate_buttons(simulation_controlls)
 
-        self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
-            self.buttons[-1].rect.bottom + 180, self.control_panel_width - 20, 250)
-
         self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
                                                             self.control_panel_width, 200, self.particle_colors)
 
-    def draw_instruction(self):
+        if self.interactions_interface.fields:
+            last_field_bottom = list(self.interactions_interface.fields.values())[-1].bottom
+            self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
+                last_field_bottom + 20, self.control_panel_width - 20, 250)
+        else:
+            self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
+                                                180, self.control_panel_width - 20, 250)
+
+    def draw_instruction_box(self):
         pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
         pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
-
-        font = pygame.font.Font(None, 23)
-        header_font = pygame.font.Font(None, 36)
+        
+    def draw_instruction_text(self):
+        font = pygame.font.Font(None, 20)
+        header_font = pygame.font.Font(None, 35)
         header_font.set_bold(True)
         header_font.set_italic(True)
         
-        y_offset = self.instruction_rect.top + 25
-
+        y_offset = self.instruction_rect.top + 10
         header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]
         segment_colors = [
             self.colors['christmas-white'],
@@ -110,14 +115,16 @@ class GUI:
         instruction_parts = [
             "Click Start to activate the particles.",
             "While they are moving, you can press Stop to pause the simulation.",
-            "To clear the screen and restart, use Reset button.",
+            "To clear the screen, use Reset button.",
             "Click Exit to leave the simulation.",
+            "Click a matrix field and scroll up for attraction between particles,",
+            "down for repulsion or leave at black for no interaction.",
             "Thank you!"
         ]
 
         total_text_height = sum(font.get_height() + 10 for line in instruction_parts) + header_font.get_height()
 
-        y_offset = self.instruction_rect.top + 80
+        y_offset = self.instruction_rect.top + 50
 
         x_offset = self.instruction_rect.left - 20
 
@@ -143,6 +150,10 @@ class GUI:
 
             y_offset += font.get_height() + 15
 
+    def draw_instruction(self):
+        self.draw_instruction_box()
+        self.draw_instruction_text()
+
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
         button_width = self.control_panel_width - 2*h_padding
@@ -151,10 +162,6 @@ class GUI:
         button_y = 50
 
         # Add buttons to the panel with the correct colors
-        # self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", (50, 86, 50), self.start_simulation))
-        # self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", (211, 171, 130), self.stop_simulation))
-        # self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", (123, 169, 191), self.reset))
-        # self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", (0, 0, 102), self.exit))
         self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
