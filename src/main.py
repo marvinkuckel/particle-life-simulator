@@ -2,7 +2,6 @@ import sys
 
 import pygame
 
-
 from gui import GUI
 from interactions import InteractionMatrix
 from simulation import Simulation

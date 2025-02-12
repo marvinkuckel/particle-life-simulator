@@ -1,5 +1,6 @@
 from typing import Callable, Tuple
 import pygame
+import time
 
 from interactions_interface import InteractionsInterface
 
@@ -20,21 +21,37 @@ class Button():
         self.action = action
         self.original_color = color
         self.hover_color = self.lighten_color(color, factor=2)
+        self.clicked_color = self.darken_color(color, factor=0.7)
+        self.is_clicked = False
+        self.clicked_time = 0
+        self.size_factor = 1
 
     def lighten_color(self, color, factor):
         return tuple(min(int(c * factor), 255) for c in color)
+    
+    def darken_color(self, color, factor):
+        return tuple(max(int(c * factor), 0) for c in color)
 
     def draw(self, screen, mouse_pos):
-        if self.rect.collidepoint(mouse_pos):
-            self.current_color = self.hover_color
-        else:
-            self.current_color = self.color
+        if self.is_clicked and time.time() - self.clicked_time > 0.3:
+            self.is_clicked = False
+            self.size_factor = 1
 
-        pygame.draw.rect(screen, self.current_color, self.rect)
-        pygame.draw.rect(screen, (0, 0, 0), self.rect, 3)
+        if self.rect.collidepoint(mouse_pos):
+            current_color = self.hover_color
+        else:
+            current_color = self.color
+
+        width = int(self.rect.width * self.size_factor)
+        height = int(self.rect.height * self.size_factor)
+        rect = pygame.Rect(self.rect.x + (self.rect.width - width) // 2, 
+                        self.rect.y + (self.rect.height - height) // 2, width, height)
+
+        pygame.draw.rect(screen, current_color, rect)
+        pygame.draw.rect(screen, (0, 0, 0), rect, 3)
 
         text_surface = self.font.render(self.text, True, (255, 255, 255))
-        text_rect = text_surface.get_rect(center=self.rect.center)
+        text_rect = text_surface.get_rect(center=rect.center)
         screen.blit(text_surface, text_rect)
 
     def trigger(self, event):
@@ -42,7 +59,9 @@ class Button():
             if self.rect.collidepoint(event.pos):  # mouse-click within button?
                 if self.action:  # if there is an action, ...
                     self.action()  # trigger it.
-                self.current_color = self.clicked_color
+                self.is_clicked = True
+                self.clicked_time = time.time()
+                self.size_factor = 0.95
 
 class GUI:
     colors = {
@@ -179,7 +198,7 @@ class GUI:
         
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
-                button.action()
+                button.trigger(event)
                 
     def draw_control_panel(self, mouse_pos):
         pygame.draw.rect(self.screen, self.colors['panel-background'],
