@@ -16,24 +16,33 @@ class Button():
         self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.text = text
         self.color = color
-        self.font = pygame.font.Font(None, 36)  # default font & size
+        self.font = pygame.font.Font(None, 36)
         self.action = action
+        self.original_color = color
+        self.hover_color = self.lighten_color(color, factor=2)
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
+    def lighten_color(self, color, factor):
+        return tuple(min(int(c * factor), 255) for c in color)
+
+    def draw(self, screen, mouse_pos):
+        if self.rect.collidepoint(mouse_pos):
+            self.current_color = self.hover_color
+        else:
+            self.current_color = self.color
+
+        pygame.draw.rect(screen, self.current_color, self.rect)
         pygame.draw.rect(screen, (0, 0, 0), self.rect, 3)
 
-        # button text
         text_surface = self.font.render(self.text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=self.rect.center)
         screen.blit(text_surface, text_rect)
 
     def trigger(self, event):
-        # check if the button is clicked and trigger its action
         if event.type == pygame.MOUSEBUTTONDOWN:  # mouse-click?
             if self.rect.collidepoint(event.pos):  # mouse-click within button?
                 if self.action:  # if there is an action, ...
                     self.action()  # trigger it.
+                self.current_color = self.clicked_color
 
 class GUI:
     colors = {
@@ -45,7 +54,7 @@ class GUI:
             'christmas-white': (255, 255, 255),
             'christmas-gold': (204, 153, 1),
             'christmas-grey': (80, 90, 120),
-            'christmas-blue': (0, 30, 250),
+            'christmas-blue': (0, 30, 250)
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict):
@@ -70,17 +79,17 @@ class GUI:
             self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
                                                 180, self.control_panel_width - 20, 250)
 
-    def draw_instruction_box(self):
+    def draw_instruction(self):
         pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
         pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
-        
-    def draw_instruction_text(self):
-        font = pygame.font.Font(None, 20)
-        header_font = pygame.font.Font(None, 35)
+
+        font = pygame.font.Font(None, 23)
+        header_font = pygame.font.Font(None, 36)
         header_font.set_bold(True)
         header_font.set_italic(True)
         
-        y_offset = self.instruction_rect.top + 10
+        y_offset = self.instruction_rect.top + 25
+
         header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]
         segment_colors = [
             self.colors['christmas-white'],
@@ -115,16 +124,14 @@ class GUI:
         instruction_parts = [
             "Click Start to activate the particles.",
             "While they are moving, you can press Stop to pause the simulation.",
-            "To clear the screen, use Reset button.",
+            "To clear the screen and restart, use Reset button.",
             "Click Exit to leave the simulation.",
-            "Click a matrix field and scroll up for attraction between particles,",
-            "down for repulsion or leave at black for no interaction.",
             "Thank you!"
         ]
 
         total_text_height = sum(font.get_height() + 10 for line in instruction_parts) + header_font.get_height()
 
-        y_offset = self.instruction_rect.top + 50
+        y_offset = self.instruction_rect.top + 80
 
         x_offset = self.instruction_rect.left - 20
 
@@ -150,10 +157,6 @@ class GUI:
 
             y_offset += font.get_height() + 15
 
-    def draw_instruction(self):
-        self.draw_instruction_box()
-        self.draw_instruction_text()
-
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
         button_width = self.control_panel_width - 2*h_padding
@@ -162,6 +165,10 @@ class GUI:
         button_y = 50
 
         # Add buttons to the panel with the correct colors
+        # self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", (50, 86, 50), self.start_simulation))
+        # self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", (211, 171, 130), self.stop_simulation))
+        # self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", (123, 169, 191), self.reset))
+        # self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", (0, 0, 102), self.exit))
         self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
@@ -174,13 +181,13 @@ class GUI:
             if button.rect.collidepoint(event.pos):
                 button.action()
                 
-    def draw_control_panel(self):
+    def draw_control_panel(self, mouse_pos):
         pygame.draw.rect(self.screen, self.colors['panel-background'],
                          pygame.Rect(self.screen_width-self.control_panel_width, 0,
                                      self.control_panel_width, self.screen_height))
         
         for button in self.buttons:
-            button.draw(self.screen)
+            button.draw(self.screen, mouse_pos)
             
         self.interactions_interface.draw(self.screen)
 

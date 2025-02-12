@@ -30,20 +30,21 @@ class Main:
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)
 
     def handle_events(self):
+        mouse_pos = pygame.mouse.get_pos()
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
                 pygame.quit()
                 sys.exit()
-                
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.gui.button_click(event)
-                self.gui.draw_control_panel()
+                self.gui.draw_control_panel(mouse_pos)
 
     def run(self, fps: int):
         self.running = True
         
-        self.gui.draw_control_panel()
         while self.running:
             self.handle_events()
             dt = self.clock.tick(fps) / 1000  # time passed since last call in ms
@@ -51,6 +52,9 @@ class Main:
             if not self.simulation.paused:
                 self.simulation.update(dt)
                 self.gui.draw_particles(self.simulation.particles)
+            
+            mouse_pos = pygame.mouse.get_pos()
+            self.gui.draw_control_panel(mouse_pos)
 
             pygame.display.flip()
 
