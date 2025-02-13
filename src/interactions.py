@@ -23,7 +23,7 @@ class InteractionMatrix:
         distance = self._distance(p1.position, p2.position)
         epsilon = 1e-12   # small value to prevent division by zero
         
-        # computes direction of the particles force vector
+        # computes normalized direction vector
         direction_x = (p2.position[0] - p1.position[0]) / (distance + epsilon)
         direction_y = (p2.position[1] - p1.position[1]) / (distance + epsilon)
 
@@ -31,6 +31,18 @@ class InteractionMatrix:
         repulsion_strength = self.global_repulsion / (distance + epsilon)  
         x_repulsion = -direction_x * repulsion_strength
         y_repulsion = -direction_y * repulsion_strength
+
+        # beyond the max_radius only global_repulsion, but no interaction force is applied
+        if distance > self.max_radius:
+            return x_repulsion, y_repulsion 
+        
+        # within interaction radius range interaction forces increase & decrease with proximity
+        force_scale = (self.max_radius - distance) / (self.max_radius - self.min_radius)  
+        net_force = force_strength * force_scale
+
+        # combines direction, attraction and repulsion into force vector 
+        x_force = direction_x * net_force + x_repulsion
+        y_force = direction_y * net_force + y_repulsion
 
         return x_force, y_force
         
