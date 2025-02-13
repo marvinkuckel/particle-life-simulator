@@ -16,7 +16,7 @@ class Main:
         self.height = pygame.display.Info().current_h
         self.screen = pygame.display.set_mode((self.width, self.height), pygame.SCALED)
 
-        self.interaction_matrix = InteractionMatrix(n_types, 0.2)
+        self.interaction_matrix = InteractionMatrix(n_types, min_radius=0.01, max_radius=0.15, global_repulsion=0.006)
         self.simulation = Simulation(self.width, self.height, self.interaction_matrix, n_particles)
         
         simulation_controlls = {
