@@ -103,7 +103,7 @@ class GUI:
         pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
 
         font = pygame.font.Font(None, 23)
-        header_font = pygame.font.Font(None, 36)
+        header_font = pygame.font.Font(None, 28)
         header_font.set_bold(True)
         header_font.set_italic(True)
         
