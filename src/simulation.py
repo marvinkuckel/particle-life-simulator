@@ -43,9 +43,8 @@ class Simulation:
         self.cells[(grid_x, grid_y)].append(particle)
 
     def update(self, dt):
-        # clears grid for updating particle movement
-        for key in self.cells:
-            self.cells[key] = []
+        # clears grid for updating particle positions in one step
+        self.cells = {key: [] for key in self.cells}
 
         # updates particle position and adds it to appropriate cell
         for p in self.particles:
