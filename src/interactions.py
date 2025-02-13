@@ -3,10 +3,11 @@ from math import sqrt
 
 
 class InteractionMatrix:
-    def __init__(self, num_types: int, min_radius: float, max_radius: float):
+    def __init__(self, num_types: int, min_radius: float, max_radius: float, global_repulsion: float):
         self.number_of_types = num_types
-        self.min_radius = min_radius  # shortest distance at which particles interact
-        self.max_radius = max_radius  # farthest distance at which particles interact
+        self.min_radius = min_radius                # shortest distance at which particles interact
+        self.max_radius = max_radius                # farthest distance at which particles interact
+        self.global_repusion = global_repulsion     # repulsive force between all particles to prevent overlap
 
         # random choice of either positive (attraction) or negative (repulsion) force between type pairs
         choice = lambda: random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
@@ -25,6 +26,13 @@ class InteractionMatrix:
         # computes direction of the particles force vector
         direction_x = (p2.position[0] - p1.position[0]) / (distance + epsilon)
         direction_y = (p2.position[1] - p1.position[1]) / (distance + epsilon)
+
+        # repulsion applies at all distances, but increases with smaller distance
+        repulsion_strength = self.global_repulsion / (distance + epsilon)  
+        x_repulsion = -direction_x * repulsion_strength
+        y_repulsion = -direction_y * repulsion_strength
+
+        return x_force, y_force
         
         
     @staticmethod
