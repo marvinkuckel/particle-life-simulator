@@ -7,7 +7,7 @@ class InteractionMatrix:
         self.number_of_types = num_types
         self.min_radius = min_radius                # shortest distance at which particles interact
         self.max_radius = max_radius                # farthest distance at which particles interact
-        self.global_repusion = global_repulsion     # repulsive force between all particles to prevent overlap
+        self.global_repulsion = global_repulsion     # repulsive force between all particles to prevent overlap
 
         # random choice of either positive (attraction) or negative (repulsion) force between type pairs
         choice = lambda: random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
@@ -19,7 +19,7 @@ class InteractionMatrix:
         
             
     def calculate_force(self, p1, p2):
-        force_strength = self.interactions[p1.type, p2.type]
+        force_strength = self.interactions[p1.type, p2.type][0]
         distance = self._distance(p1.position, p2.position)
         epsilon = 1e-12   # small value to prevent division by zero
         
