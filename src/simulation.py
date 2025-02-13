@@ -1,7 +1,6 @@
 import random
 from particle import Particle
-from interactions import InteractionMatrix
-
+from interactions import InteractionMatrix, calculate_force_
 
 class Simulation:
     def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles=1000, num_types=4, time_factor=0.1, grid_size=10):
