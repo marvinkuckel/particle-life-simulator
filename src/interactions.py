@@ -9,21 +9,14 @@ class InteractionMatrix:
         
         # Erstellen der Interaktionsmatrix
         self.interactions = {
-            (i, j): [choice(), self.default_radius, 1.0]  # Default strength is 1.0 (no attraction)
+            (i, j): [choice(), self.default_radius]  
             for i in range(num_types) for j in range(num_types)
         }
         #self.min_distance = 0.05  #minimum allowed distance between particles (prevents touching & sticking)
         #self.smooth_factor = 0.05  #strength of the smooth force reduction
-
-    def add_attraction(self, type1, type2, strength):
-        #Set an attraction force between two particle types.
-        #The interaction is symmetric, meaning the attraction applies in both directions.
-        if type1 != type2:
-            self.interactions[(type1, type2)][2] = strength
-            self.interactions[(type2, type1)][2] = strength 
             
     def calculate_force(self, p1, p2):
-        force_streng, radius, attraction = self.interactions[p1.type, p2.type]
+        force_streng, radius = self.interactions[p1.type, p2.type]
         
         # Skip calculation if force strength is zero (no interaction) to safe time
         if force_streng == 0:
@@ -44,7 +37,7 @@ class InteractionMatrix:
 
     
         if distance <= radius and distance > epsilon:
-                applied_force = (force_streng / (distance ** 2 + epsilon)) - attraction  # Anziehende Kraft anwenden
+                applied_force = (force_streng / (distance ** 2 + epsilon))  # Anziehende Kraft anwenden
                 x_force = (p2.position[0] - p1.position[0]) * applied_force
                 y_force = (p2.position[1] - p1.position[1]) * applied_force
                 return x_force, y_force
