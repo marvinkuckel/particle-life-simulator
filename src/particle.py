@@ -11,7 +11,7 @@ class Particle:
         self.random_movement = random_movement
 
 
-    def apply_force(self, force_x, force_y, scaling = 0.01):
+    def apply_force(self, force_x, force_y, scaling = 0.03):
         self.velocity = [self.velocity[0] + force_x*scaling, self.velocity[1] + force_y*scaling]
 
     def update_position(self, dt, time_factor):
