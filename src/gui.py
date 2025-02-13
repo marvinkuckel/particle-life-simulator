@@ -76,7 +76,7 @@ class GUI:
         
     def draw_instruction_text(self):
         font = pygame.font.Font(None, 20)
-        header_font = pygame.font.Font(None, 35)
+        header_font = pygame.font.Font(None, 28)
         header_font.set_bold(True)
         header_font.set_italic(True)
         
