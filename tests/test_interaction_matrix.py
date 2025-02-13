@@ -1,7 +1,7 @@
 # test_interaction_matrix.py
 
 import pytest
-from src.interaction_matrix import InteractionMatrix
+from src.interactions import InteractionMatrix
 from src.particle import Particle
 
 def test_calculate_force_no_interaction():
