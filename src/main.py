@@ -82,3 +82,7 @@ if __name__ == "__main__":
     stats = pstats.Stats(profiler)
     stats.strip_dirs().sort_stats("tottime").print_stats(20)  #shows us the 20 slowest functions
     profiler.dump_stats("profiling_results.prof")  # save the  results to a file
+
+'''
+results: u can find a screeshots in the isssue "adding cProfile"
+'''
