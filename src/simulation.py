@@ -5,10 +5,11 @@ from interactions import InteractionMatrix
 class Simulation:
     def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles=1000, num_types=4, time_factor=0.1, grid_size=10):
         self.width, self.height = width, height
-        # partitions the simulation area into cells 
-        self.grid_size = grid_size
-        self.cells = {(x, y): [] for x in range(grid_size) for y in range(grid_size)}
-        
+        # dynamically partitions simulation area into grid adjusted for screens aspect ratio
+        # cells count & size scales with particle number (more particles = more & smaller cells)
+        self.grid_size = int((num_particles ** 0.5) * (width / height) ** 0.5)
+        self.cells = {(x, y): [] for x in range(self.grid_size) for y in range(self.grid_size)}
+
         self.num_particles = num_particles
         self.num_types = num_types
         self.time_factor = time_factor
