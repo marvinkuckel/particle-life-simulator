@@ -29,8 +29,6 @@ class Main:
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)
 
     def handle_events(self):
-        mouse_pos = pygame.mouse.get_pos()
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -39,7 +37,6 @@ class Main:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.gui.button_click(event)
-                self.gui.draw_control_panel(mouse_pos)
 
     def run(self, fps: int):
         self.running = True
