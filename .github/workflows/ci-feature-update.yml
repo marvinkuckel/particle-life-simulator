@@ -3,28 +3,6 @@ name: Python CI
 on: [push, pull_request]
 
 jobs:
-  lint-hard:
-    name: Intrusive Linting
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"  # Linting läuft nur mit einer festen Version
-          cache: "pip"
-
-      - name: Install Ruff
-        run: pip install ruff
-
-      - name: Run Ruff
-        run: |
-          output=$(ruff check . --output-format github --select F,E,I,B,C4,UP,PERF,SIM,T20,PL --ignore E501 --line-length 100 --exit-zero || true)
-          echo "::warning::%0A$output"  # show as warnings in github action
-  
   lint-soft:
     name: Fundamental Linting
     runs-on: ubuntu-latest
@@ -44,7 +22,27 @@ jobs:
 
       - name: Run Ruff
         run: ruff check . --output-format github --line-length 100
+        
+  lint-hard:
+    name: Intrusive Linting
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"  # Linting läuft nur mit einer festen Version
+          cache: "pip"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff
+        run: ruff check . --output-format github --select F,E,I,B,C4,UP,PERF,SIM,T20,PL --ignore E501 --line-length 100 --exit-zero | sed 's/::error/::warning/g' # show ruff errors as github action warnings
+  
   test:
     name: Run Tests on
     runs-on: ubuntu-latest
