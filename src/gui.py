@@ -217,7 +217,7 @@ class GUI:
         for button in self.buttons:
             button.draw(self.screen, mouse_pos)
             
-        self.interactions_interface.draw(self.screen)
+        self.interactions_interface.draw(self.screen, mouse_pos)
 
         self.draw_instruction()
             

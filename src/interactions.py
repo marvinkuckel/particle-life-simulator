@@ -10,7 +10,7 @@ class InteractionMatrix:
         self.global_repulsion = global_repulsion     # repulsive force between all particles to prevent overlap
 
         # random choice of either positive (attraction) or negative (repulsion) force between type pairs
-        choice = lambda: random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+        choice = lambda: random.choice((1, -1)) * random.choice((0.0, 0.2, 0.4, 0.6, 0.8, 1.0))
         # dictionary which stores type pairs & their interaction force 
         self.interactions = {
             (i, j): [choice()]  
