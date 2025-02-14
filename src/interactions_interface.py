@@ -70,6 +70,7 @@ class InteractionsInterface:
         field_size = self.field_size
         types = self.interaction_matrix.number_of_types
 
+        # i = row; j = col
         self.fields = {(i, j): pygame.Rect(rel_x + (j+1)*field_size,
                                            rel_y + (i+1)*field_size,
                                            field_size, field_size)
@@ -80,9 +81,9 @@ class InteractionsInterface:
         """
         rel_x, rel_y = self.relative_position
         radius = self.field_size * 0.2  # size of indicator
-        spacing = self.field_size       # column/row size
+        spacing = self.field_size       # column width / row height
         
-        # put center of indicator in the middle of rows/cols
+        # put center of indicator in the middle of each rows/cols
         rel_x, rel_y = rel_x + spacing/2, rel_y + spacing/2
         
         for i, color in enumerate(self.type_colors, start=1):
