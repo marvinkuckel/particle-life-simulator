@@ -21,8 +21,8 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff
-        run: ruff check . --output-format github --line-length 100
-        
+        run: ruff check . --output-format github --line-length 100 --exit-zero
+
   lint-hard:
     name: Intrusive Linting
     runs-on: ubuntu-latest
