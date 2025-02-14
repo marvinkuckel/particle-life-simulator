@@ -18,8 +18,8 @@ class InteractionMatrix:
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
         
         
-        def calculate_force(self, p1, p2):
-            return calculate_force_(
+    def calculate_force(self, p1, p2):
+        return calculate_force_(
             p1.position[0], p1.position[1], p1.type,
             p2.position[0], p2.position[1], p2.type,
             self.interactions, self.global_repulsion, self.max_radius, self.min_radius
@@ -30,13 +30,13 @@ def calculate_force_(px1: float, py1: float, type1: int,
                      px2: float, py2: float, type2: int, 
                      interactions: np.ndarray, global_repulsion: float, 
                      max_radius: float, min_radius: float):
-    force_strength = interactions[type1, type2][0]
+    force_strength = interactions[type1, type2]
     distance = _distance(px1, py1, px2, py2)
     epsilon = 1e-12   # small value to prevent division by zero
     
     # computes normalized direction vector
-    direction_x = (px2[0] - px1[0]) / (distance + epsilon)
-    direction_y = (py2[1] - py1[1]) / (distance + epsilon)
+    direction_x = (px2 - px1) / (distance + epsilon)
+    direction_y = (py2 - py1) / (distance + epsilon)
 
     # repulsion applies at all distances, but increases with smaller distance
     repulsion_strength = global_repulsion / (distance + epsilon)  

@@ -1,6 +1,7 @@
 import random
 from particle import Particle
 from interactions import InteractionMatrix, calculate_force_
+import numpy as np
 
 class Simulation:
     def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles=1000, num_types=4, time_factor=0.1, grid_size=10):
@@ -8,7 +9,7 @@ class Simulation:
         # dynamically partitions simulation area into grid adjusted for screens aspect ratio
         # cells count & size scales with particle number (more particles = more & smaller cells)
         self.grid_size = int((num_particles ** 0.5) * (width / height) ** 0.5)
-        self.cells = {(x, y): [] for x in range(self.grid_size) for y in range(self.grid_size)}
+        self.cells = {(x, y): np.empty(0, dtype=object) for x in range(self.grid_size) for y in range(self.grid_size)}
 
         self.num_particles = num_particles
         self.num_types = num_types
@@ -21,7 +22,7 @@ class Simulation:
 
 
     def generate_particles(self):
-        particles = []
+        particles = np.empty(0, dtype=object)
 
         for i in range(self.num_particles):
             # generates the number of particles specified, with the parameters set here
@@ -30,7 +31,7 @@ class Simulation:
                                 type=i % self.num_types,
                                 size=1, friction=0.5, random_movement=0.01)
 
-            particles.append(particle)
+            particles = np.concatenate((particles, np.array([particle])))
             # place particle in grid cell corresponding to initial position
             self.add_to_grid(particle)
 
@@ -42,9 +43,17 @@ class Simulation:
         grid_x = int(particle.position[0] * self.grid_size) % self.grid_size
         grid_y = int(particle.position[1] * self.grid_size) % self.grid_size
 
+        #reashure that its always a numpy array (important for numba)
+        if isinstance(self.cells[(grid_x, grid_y)], list):
+            self.cells[(grid_x, grid_y)] = np.array(self.cells[(grid_x, grid_y)], dtype=object)
+        if not isinstance(self.cells[(grid_x, grid_y)], np.ndarray):
+            self.cells[(grid_x, grid_y)] = np.empty(0, dtype=object)
+        
         # adds particle to appropriate cell 
-        self.cells[(grid_x, grid_y)].append(particle)
-
+        if self.cells[(grid_x, grid_y)].size == 0:
+            self.cells[(grid_x, grid_y)] = np.array([particle], dtype=object)
+        else:
+            self.cells[(grid_x, grid_y)] = np.concatenate((self.cells[(grid_x, grid_y)], np.array([particle])))
 
     def update(self, dt):
         # clears grid for updating particle positions in one step
@@ -99,4 +108,4 @@ class Simulation:
 
     def reset_simulation(self):
         # removes all particles
-        self.particles = []              
+        self.particles = np.array([], dtype=object)              
