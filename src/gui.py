@@ -139,7 +139,9 @@ class GUI:
             "Start": self.colors['christmas-green'],
             "Stop": self.colors['christmas-gold'],
             "Reset": self.colors['christmas-red'],
-            "Exit": self.colors['christmas-blue']
+            "Exit": self.colors['christmas-blue'],
+            "attraction": (0, 224, 0),
+            "repulsion": (224, 0, 0)
         }
 
         instruction_parts = [
@@ -147,12 +149,16 @@ class GUI:
             "While they are moving, you can press Stop to pause the simulation.",
             "To clear the screen and restart, use Reset button.",
             "Click Exit to leave the simulation.",
-            "Thank you!"
+            "Thank you!",
+            "",
+            10*"_" + "Matrix Controls" + 10*"_",
+            "Increase attraction - left mouse button / scroll upwards",
+            "Increase repulsion - right mouse button / scroll downwards"
         ]
 
         total_text_height = sum(font.get_height() + 10 for line in instruction_parts) + header_font.get_height()
 
-        y_offset = self.instruction_rect.top + 80
+        y_offset = self.instruction_rect.top + 70
 
         x_offset = self.instruction_rect.left - 20
 
@@ -176,7 +182,10 @@ class GUI:
 
                 centered_x_offset += word_surface.get_width() + font.size(" ")[0]
 
-            y_offset += font.get_height() + 15
+            y_offset += font.get_height() + 13
+            
+        # set the height so the text fits inside
+        self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
