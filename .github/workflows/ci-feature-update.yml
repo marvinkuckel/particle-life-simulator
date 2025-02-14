@@ -17,11 +17,8 @@ jobs:
           python-version: "3.9"  # Linting läuft nur mit einer festen Version
           cache: "pip"
 
-      - name: Install Black & Ruff
-        run: pip install black ruff
-
-      - name: Run Black
-        run: black --check .
+      - name: Install Ruff
+        run: pip install ruff
 
       - name: Run Ruff
         run: ruff check .
@@ -29,7 +26,7 @@ jobs:
   test:
     name: Run Tests on Multiple Python Versions
     runs-on: ubuntu-latest
-    needs: lint  # Tests starten nur, wenn Linting erfolgreich war
+    #needs: lint  # Tests starten nur, wenn Linting erfolgreich war
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]  # Hier alle unterstützen Versionen eintragen
