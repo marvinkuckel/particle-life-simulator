@@ -55,13 +55,11 @@ class InteractionsInterface:
             key = result[0]
             interaction_value = self.interaction_matrix.interactions[key][0]
             
-            # event.button: 1 = left mouse button click; 2 = mouse wheel click; 3 = right mouse button click
-            # 4 = mouse wheel up
-            if event.button == 4 and interaction_value < 1:
-                self.interaction_matrix.interactions[key][0] = round(interaction_value + 0.2, 2)
-            # 5 = mouse wheel down
-            if event.button == 5 and interaction_value > -1:
-                self.interaction_matrix.interactions[key][0] = round(interaction_value - 0.2, 2)
+            # event.button: 1 = left mouse button click; 2 = mouse wheel click; 3 = right mouse button click; 4 = mouse wheel up; 5 = mouse wheel down
+            if event.button in (1, 4) and interaction_value < 1:
+                self.interaction_matrix.interactions[key][0] = round(interaction_value + adjust_by, 2)  # prevent a force value grater than 1.0 due to float precision error
+            if event.button in (3, 5) and interaction_value > -1:
+                self.interaction_matrix.interactions[key][0] = round(interaction_value - adjust_by, 2)
 
     def __initiate_fields(self):
         """
