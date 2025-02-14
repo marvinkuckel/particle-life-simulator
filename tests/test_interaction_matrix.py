@@ -6,6 +6,7 @@ from src.particle import Particle
 
 def test_calculate_force_no_interaction():
     interaction_matrix = InteractionMatrix(num_types=4, max_radius=0.09, min_radius=0, global_repulsion=0)
+    interaction_matrix.interactions[(0, 1)] = [1]
     p1 = Particle(type=0, size=2, position=(0.1, 0.1))
     p2 = Particle(type=1, size=2, position=(0.1, 0.2))
     
@@ -17,6 +18,7 @@ def test_calculate_force_no_interaction():
 
 def test_calculate_force_with_interaction():
     interaction_matrix = InteractionMatrix(num_types=4, max_radius=0.5, min_radius=0, global_repulsion=0)
+    interaction_matrix.interactions[(0, 1)] = [0.1]
     p1 = Particle(type=0, size=2, position=(0.1, 0.1))
     p2 = Particle(type=1, size=2, position=(0.1, 0.15))
     
