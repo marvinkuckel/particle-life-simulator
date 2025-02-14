@@ -76,19 +76,21 @@ class GUI:
             'christmas-blue': (0, 30, 250)
         }
     
-    def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict):
+    def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict, padding: int = 60):
         self.screen = screen
         self.screen_width, self.screen_height = screen_width, screen_height
         self.control_panel_width = screen_width - screen_height
+        self.padding = padding  # distance between panel elementens and panel boundaries/borders
         
         self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
         self.interaction_matrix = interaction_matrix
         
         self.buttons = []
-        self.initiate_buttons(simulation_controlls)
+        self.initiate_buttons(simulation_controlls, h_padding = self.padding)
 
-        self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
-                                                            self.control_panel_width, 200, self.particle_colors)
+        self.interactions_interface = InteractionsInterface(interaction_matrix, self.particle_colors,
+                                                            top_left = (screen_width - self.control_panel_width//2, self.buttons[-1].rect.bottom),
+                                                            right = self.screen_width - self.padding)
 
         if self.interactions_interface.fields:
             last_field_bottom = list(self.interactions_interface.fields.values())[-1].bottom

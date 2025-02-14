@@ -3,25 +3,24 @@ from typing import List, Tuple
 import pygame
 
 class InteractionsInterface:
-    def __init__(self, interaction_matrix, relative_position: Tuple[int, int], panel_width: int, padding: int, type_colors: List[Tuple[int, int, int]]):
+    def __init__(self, interaction_matrix, type_colors: List[Tuple[int, int, int]], top_left: Tuple[int, int], right: int):
         """
         Serves as an interface between GUI and InteractionMatrix class.<br>
         Provides the visual representation of InteractionMatrix and the ability to alter the strength of force between particle types.
         
         params:
           interaction_matrix: InteractionMatrix object
-          relative_position: Coordinates of top-left corner
-          panel_width: Width of control panel to determine the size of InteractionsInterface depending on padding
-          padding: to make the interface smaller
-          type_colors: list containing the color of each type
+          type_colors: list containing the colors of each type
+          top_left (x, y): relative position/coordinate the matrix is drawn to
+          right: x-coordinate to which the matrix extends (determining width and height of matrix)
         """
         self.interaction_matrix = interaction_matrix
-        self.relative_position = relative_position[0] + 2*padding - 62, relative_position[1]
+        self.relative_position = top_left
         self.type_colors = type_colors
         
         # calculate how big each field has to be
         num_types = self.interaction_matrix.number_of_types
-        self.field_size = (panel_width - 2*padding) / (num_types+1)
+        self.field_size = abs(top_left[0] - right) / (num_types+1)
         
         self.__initiate_fields()
 
