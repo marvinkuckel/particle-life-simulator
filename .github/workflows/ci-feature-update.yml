@@ -22,8 +22,8 @@ jobs:
 
       - name: Run Ruff
         run: |
-          output=$(ruff check . --output-format github --select F,E,I,B,C4,UP,PERF,SIM,T20,PL --ignore E501 --line-length 100 || true)
-          echo "::warning::$output"
+          output=$(ruff check . --output-format github --select F,E,I,B,C4,UP,PERF,SIM,T20,PL --ignore E501 --line-length 100 --exit-zero || true)
+          echo "::warning::%0A$output"  # show as warnings in github action
   
   lint-soft:
     name: Fundamental Linting
