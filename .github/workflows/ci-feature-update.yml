@@ -6,7 +6,6 @@ jobs:
   lint-hard:
     name: Intrusive Linting
     runs-on: ubuntu-latest
-    continue-on-error: true  # show warning instead of failing
 
     steps:
       - name: Checkout code
@@ -22,6 +21,7 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff
+        continue-on-error: true  # show warning instead of failing
         run: ruff check . --output-format github --select F,E,I,B,C4,UP,PERF,SIM,T20,PL --ignore E501 --line-length 100
   
   lint-soft:
