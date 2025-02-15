@@ -61,7 +61,7 @@ def test_handle_click():
 
     # Create the InteractionsInterface instance
     interface = InteractionsInterface(interaction_matrix, type_colors, (100, 100), 500)
-    
+
     # Simulate a click on the field (using a Pygame event)
     mouse_pos = (150, 150)  # Position inside the first field
     event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'pos': mouse_pos, 'button': 4})  # Scroll up event
@@ -69,8 +69,9 @@ def test_handle_click():
     # Handle the click
     interface.handle_click(event)
 
-    # Check if the interaction value has changed
-    assert interaction_matrix.interactions[(0, 1)] == 0.7
+    # Use a tolerance to check if the interaction value has increased as expected
+    assert abs(interaction_matrix.interactions[(0, 1)] - 0.7) < 1e-6, \
+        f"Expected 0.7 but got {interaction_matrix.interactions[(0, 1)]}"
 
 # Run the tests
 if __name__ == "__main__":
