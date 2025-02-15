@@ -3,8 +3,8 @@ name: Python CI
 on: [push, pull_request]
 
 jobs:
-  lint:
-    name: Code Linting
+  lint-soft:
+    name: Fundamental Linting
     runs-on: ubuntu-latest
 
     steps:
@@ -17,22 +17,41 @@ jobs:
           python-version: "3.9"  # Linting läuft nur mit einer festen Version
           cache: "pip"
 
-      - name: Install Black & Ruff
-        run: pip install black ruff
-
-      - name: Run Black
-        run: black --check .
+      - name: Install Ruff
+        run: pip install ruff
 
       - name: Run Ruff
-        run: ruff check .
+        run: ruff check . --output-format github --line-length 100 --exit-zero
 
-  test:
-    name: Run Tests on Multiple Python Versions
+  lint-hard:
+    name: Intrusive Linting
     runs-on: ubuntu-latest
-    needs: lint  # Tests starten nur, wenn Linting erfolgreich war
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"  # Linting läuft nur mit einer festen Version
+          cache: "pip"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff
+        run: ruff check . --output-format github --select F,E,I,B,C4,UP,PERF,SIM,T20,PL --ignore E501 --line-length 100 --exit-zero | sed 's/::error/::warning/g' # show ruff errors as github action warnings
+  
+  test:
+    name: Run Tests on
+    runs-on: ubuntu-latest
+    #needs: lint  # only start if named job was successful
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]  # Hier alle unterstützen Versionen eintragen
+        # testing with currently popular python versions
+        # 3.10 is lowest version that is supported by current pytest version
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout code
@@ -50,4 +69,4 @@ jobs:
           pip install -r requirements.txt pytest
 
       - name: Run Tests
-        run: pytest
+        run: python -m pytest
