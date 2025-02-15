@@ -4,6 +4,40 @@ import time
 
 from interactions_interface import InteractionsInterface
 
+class Text:
+    """Simple text that can be updated by a get function and drawn in draw_control_panel"""
+    def __init__(self, text, font_size, center, font_color = (255, 255, 255), get_value: callable = None, length = None):
+        self.text = text
+        self.length = length
+        self.get_value = get_value
+        
+        self.font = pygame.font.Font(None, font_size)
+        self.font_color = font_color
+        
+        self.rendered_text = self.font.render(text, True, font_color)
+        self.rect = self.rendered_text.get_rect(center=center)
+    
+    def draw(self, screen):
+        screen.blit(self.rendered_text, self.rect)
+        
+    def set_text(self, text):
+        self.rendered_text = self.font.render(text, True, self.font_color)
+        #self.rect = self.rendered_text.get_rect(center=self.rect.center)
+        
+    def update(self):
+        if self.get_value:
+            text = str(round(self.get_value(), 4))
+            
+            # keep text the same length
+            if self.length:
+                while len(text) < self.length:
+                    text = text + "0"
+                if len(text) > self.length:
+                    text = text[:self.length]
+                
+            self.set_text(text)
+
+
 class Button():
     def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None, font_size = 36):
         """
@@ -86,14 +120,14 @@ class GUI:
         self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
         self.interaction_matrix = interaction_matrix
         
+        self.text_fields = []
+        
         self.buttons = []
         self.initiate_main_buttons(simulation_controlls, h_padding = self.padding)
-
+        
         self.interactions_interface = InteractionsInterface(interaction_matrix, self.particle_colors,
                                                             top_left = (screen_width - self.control_panel_width//2, self.buttons[-1].rect.bottom),
                                                             right = self.screen_width - self.padding)
-
-        self.initiate_secondary_buttons(simulation_controlls)
 
         if self.interactions_interface.fields:
             last_field_bottom = list(self.interactions_interface.fields.values())[-1].bottom
@@ -102,6 +136,8 @@ class GUI:
         else:
             self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
                                                 180, self.control_panel_width - 20, 250)
+        
+        self.initiate_secondary_buttons(simulation_controlls)
 
     def draw_instruction(self):
         pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
@@ -213,8 +249,8 @@ class GUI:
         relative_x = self.screen_width - self.control_panel_width + self.padding
         relative_y = self.buttons[-1].rect.bottom + self.padding
         
-        section_width = self.screen_width - self.control_panel_width//2 - relative_x
-        center_x = relative_x + section_width//2
+        section_width = self.screen_width - self.control_panel_width//2 - relative_x - 10
+        center_x = relative_x + section_width//2 + 10
         
         # simulation speed
         font_size = font.size("0.000")
@@ -222,14 +258,19 @@ class GUI:
         button_size = (section_width - font_size[0] - 20) // len(options)
         
         for i, change_by in enumerate(options):
-            func = lambda change=change_by: simulation_controls['sim_speed'](change)
+            func = lambda change=change_by: simulation_controls['set_sim_speed'](change)
                 
             sign = "+" if change_by > 0 else "-"
             text = sign + str(int(abs(change_by) * 100)) + "%"
+            
             offset = 0 if i < len(options)//2 else font_size[0] + 20
             self.buttons.append(Button((relative_x + i*(button_size + 4) + offset, relative_y), (button_size, button_size),
                                        text, self.colors["normal-button"], func,
                                        font_size=button_size//2))
+
+        setting_name = Text("Simulation Speed", 30, (center_x, self.buttons[-1].rect.top - 20))
+        setting_value = Text("0.0000", 24, (center_x, self.buttons[-1].rect.center[1]), get_value=simulation_controls['get_sim_speed'], length=6)
+        self.text_fields.extend((setting_name, setting_value))
 
     def button_click(self, event):
         self.interactions_interface.handle_click(event)
@@ -242,6 +283,10 @@ class GUI:
         pygame.draw.rect(self.screen, self.colors['panel-background'],
                          pygame.Rect(self.screen_width-self.control_panel_width, 0,
                                      self.control_panel_width, self.screen_height))
+        
+        for text in self.text_fields:
+            text.update()
+            text.draw(self.screen)
         
         for button in self.buttons:
             button.draw(self.screen, mouse_pos)
