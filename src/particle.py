@@ -1,18 +1,20 @@
 import random
 import pygame
 
+
 class Particle:
-    def __init__(self, type: int, size, position, velocity=[0, 0], friction=0, random_movement=0):
+    def __init__(self, type: int, size: int, position: tuple, velocity: tuple, friction: float, random_movement: float, force_scaling: float):
         self.type = type
         self.size = size
         self.position = position
         self.velocity = velocity
         self.friction = friction
         self.random_movement = random_movement
+        self.force_scaling = force_scaling
+     
 
-
-    def apply_force(self, force_x, force_y, scaling = 0.03):
-        self.velocity = [self.velocity[0] + force_x*scaling, self.velocity[1] + force_y*scaling]
+    def apply_force(self, force_x, force_y):
+        self.velocity = [self.velocity[0] + force_x*self.force_scaling, self.velocity[1] + force_y*self.force_scaling]
 
     def update_position(self, dt, time_factor):
         # update velocity based on applied friction
