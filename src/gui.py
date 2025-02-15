@@ -5,7 +5,7 @@ import time
 from interactions_interface import InteractionsInterface
 
 class Button():
-    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None):
+    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None, font_size = 36):
         """
         params:
             pos: (x, y) coordinates of buttons top-left corner
@@ -17,7 +17,7 @@ class Button():
         self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.text = text
         self.color = color
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font(None, font_size)
         self.action = action
         self.original_color = color
         self.hover_color = self.lighten_color(color, factor=2)
@@ -67,6 +67,7 @@ class GUI:
     colors = {
             'simulation-background': (20, 20, 25),
             'panel-background': (25, 25, 35),
+            'normal-button': (40, 40, 40),
             'christmas-red': (220, 20, 60),
             'christmas-darkred': (150, 25, 30),
             'christmas-green': (0, 128, 0),
@@ -91,6 +92,8 @@ class GUI:
         self.interactions_interface = InteractionsInterface(interaction_matrix, self.particle_colors,
                                                             top_left = (screen_width - self.control_panel_width//2, self.buttons[-1].rect.bottom),
                                                             right = self.screen_width - self.padding)
+
+        self.initiate_secondary_buttons(simulation_controlls)
 
         if self.interactions_interface.fields:
             last_field_bottom = list(self.interactions_interface.fields.values())[-1].bottom
@@ -202,9 +205,31 @@ class GUI:
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
 
-    def initiate_secondary_buttons(self):
-        """Buttons for managing parameters influencing the particle interactions"""
+    def initiate_secondary_buttons(self, simulation_controls):
+        """Buttons for managing parameters influencing the particle interactions
+        Call this method after creating interactions_interface"""
+        font = pygame.font.Font(None, 36)
         
+        relative_x = self.screen_width - self.control_panel_width + self.padding
+        relative_y = self.buttons[-1].rect.bottom + self.padding
+        
+        section_width = self.screen_width - self.control_panel_width//2 - relative_x
+        center_x = relative_x + section_width//2
+        
+        # simulation speed
+        font_size = font.size("0.000")
+        options = [-0.25, -0.1, -0.02, 0.02, 0.1, 0.25]
+        button_size = (section_width - font_size[0] - 20) // len(options)
+        
+        for i, change_by in enumerate(options):
+            func = lambda change=change_by: simulation_controls['sim_speed'](change)
+                
+            sign = "+" if change_by > 0 else "-"
+            text = sign + str(int(abs(change_by) * 100)) + "%"
+            offset = 0 if i < len(options)//2 else font_size[0] + 20
+            self.buttons.append(Button((relative_x + i*(button_size + 4) + offset, relative_y), (button_size, button_size),
+                                       text, self.colors["normal-button"], func,
+                                       font_size=button_size//2))
 
     def button_click(self, event):
         self.interactions_interface.handle_click(event)
