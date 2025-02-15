@@ -1,6 +1,6 @@
 import random
 from particle import Particle
-from interactions import InteractionMatrix, calculate_force_
+from interactions import InteractionMatrix, calculate_force
 import numpy as np
 
 class Simulation:
@@ -75,7 +75,7 @@ class Simulation:
                         if neighbor_cell in self.cells:
                             for p2 in self.cells[neighbor_cell]:
                                 if p1 is not p2:    # no self interaction
-                                    force_x, force_y = calculate_force_(
+                                    force_x, force_y = calculate_force(
                                         p1.position[0], p1.position[1], p1.type,
                                         p2.position[0], p2.position[1], p2.type,
                                         self.interaction_matrix.interactions,

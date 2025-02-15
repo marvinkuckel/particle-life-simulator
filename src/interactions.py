@@ -18,7 +18,7 @@ class InteractionMatrix:
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
         
 @njit            
-def calculate_force_(px1: float, py1: float, type1: int, 
+def calculate_force(px1: float, py1: float, type1: int, 
                      px2: float, py2: float, type2: int, 
                      interactions: np.ndarray, global_repulsion: float, 
                      max_radius: float, min_radius: float):
