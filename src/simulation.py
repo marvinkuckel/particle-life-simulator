@@ -101,3 +101,28 @@ class Simulation:
     def reset_simulation(self):
         # removes all particles
         self.particles = []              
+    
+    
+    def adjust_time_factor(self, by_percent: float):
+        self.time_factor += self.time_factor * by_percent
+        
+        
+    def modify_particle_count(self, by: int):
+        if by > 0:
+            self.num_types = by
+            self.particles.extend(self.generate_particles())
+            self.num_types = len(self.particles)
+        else:
+            self.particles = self.particles[:len(self.particles) - abs(by)]
+            
+    
+    def set_friction(self, friction: float):
+        """friction: number between 0 and 1"""
+        for particle in self.particles:
+            particle.friction = friction
+    
+    
+    def set_random_movement(self, random_movement: float):
+        """random_movement: should be close to 0 or be 0"""
+        for particle in self.particles:
+            particle.random_movement = random_movement

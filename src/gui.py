@@ -86,7 +86,7 @@ class GUI:
         self.interaction_matrix = interaction_matrix
         
         self.buttons = []
-        self.initiate_buttons(simulation_controlls, h_padding = self.padding)
+        self.initiate_main_buttons(simulation_controlls, h_padding = self.padding)
 
         self.interactions_interface = InteractionsInterface(interaction_matrix, self.particle_colors,
                                                             top_left = (screen_width - self.control_panel_width//2, self.buttons[-1].rect.bottom),
@@ -185,7 +185,7 @@ class GUI:
         # set the height so the text fits inside
         self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
 
-    def initiate_buttons(self, simulation_controlls, h_padding = 60):
+    def initiate_main_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
         button_width = self.control_panel_width - 2*h_padding
         button_height = 50
@@ -201,6 +201,10 @@ class GUI:
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
+
+    def initiate_secondary_buttons(self):
+        """Buttons for managing parameters influencing the particle interactions"""
+        
 
     def button_click(self, event):
         self.interactions_interface.handle_click(event)

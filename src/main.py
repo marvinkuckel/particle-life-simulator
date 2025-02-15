@@ -24,6 +24,10 @@ class Main:
             'stop': self.simulation.stop_simulation,
             'reset': self.simulation.reset_simulation,
             'exit': lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),
+            'sim_speed': self.simulation.adjust_time_factor,
+            'particle_count': self.simulation.modify_particle_count,
+            'friction': self.simulation.set_friction,
+            'random_movement': self.simulation.set_random_movement
         }
         
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)
