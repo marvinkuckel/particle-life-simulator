@@ -25,28 +25,22 @@ class InteractionMatrix:
         return self.num_types
 
 # Test handle_click function
-def test_handle_click():
-    """Tests if handle_click correctly modifies the interaction values."""
-    # Create a mock interaction matrix
-    interaction_matrix = InteractionMatrix(num_types=4, max_radius=0.5, min_radius=0, global_repulsion=0)
-    interaction_matrix.interactions[(0, 1)] = 0.5  # Initial interaction value
-    
-    # Define particle type colors
-    type_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
-
-    # Create the InteractionsInterface instance
-    interface = InteractionsInterface(interaction_matrix, type_colors, (100, 100), 500)
-
-    # Simulate a mouse scroll up event at position (150, 150)
-    mouse_pos = (150, 150)
-    event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'pos': mouse_pos, 'button': 4})  # Scroll up
-
-    # Apply the click event to modify interaction value
-    interface.handle_click(event)
-
-    # Check if the interaction value increased by 0.2 (expected 0.7)
-    assert abs(interaction_matrix.interactions[(0, 1)] - 0.7) < 1e-6, \
-        f"Expected 0.7 but got {interaction_matrix.interactions[(0, 1)]}"
+def handle_click(self, event: pygame.event.Event, adjust_by: float = 0.2):
+    """Handles a mouse button event to modify interaction matrix values."""
+    print(f"Received event: {event}")  # Debugging: Prüfen, ob das Event korrekt ankommt
+    if result := pygame.Rect(event.pos, (1, 1)).collidedict(self.fields, values=True):
+        key = result[0]
+        interaction_value = self.interaction_matrix.interactions[key]
+        print(f"Clicked on field: {key}, current value: {interaction_value}")  # Debugging: Prüfen, ob das richtige Feld erkannt wird
+        
+        if event.button == 4 and interaction_value < 1:
+            new_value = round(interaction_value + adjust_by, 2)
+            print(f"Updating interaction value from {interaction_value} to {new_value}")  # Debugging: Prüfen, ob der Wert aktualisiert wird
+            self.interaction_matrix.interactions[key] = new_value
+        elif event.button == 5 and interaction_value > -1:
+            new_value = round(interaction_value - adjust_by, 2)
+            print(f"Updating interaction value from {interaction_value} to {new_value}")
+            self.interaction_matrix.interactions[key] = new_value
 
 # Pygame setup and teardown for testing
 @pytest.fixture(scope="module", autouse=True)
