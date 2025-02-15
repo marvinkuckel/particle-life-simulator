@@ -61,5 +61,25 @@ class Main:
             pygame.display.flip()
 
 if __name__ == "__main__":
+    profiler = cProfile.Profile()
+    profiler.enable()                #start profiling
+    
     app = Main(n_particles=1000)
-    app.run(fps=30)
+    
+    start_time = time.time()  #safe the start time
+    running= True 
+    
+    while time.time() - start_time < 15:  #progr. runs 15 seconds
+        app.handle_events()
+        dt = 1 / 30  #one frame (30 FPS)
+        app.simulation.update(dt)
+        app.gui.draw_particles(app.simulation.particles)
+        app.gui.draw_control_panel(pygame.mouse.get_pos()) 
+        pygame.display.flip() 
+
+    profiler.disable()  #stop profiling
+    
+    profiler.disable()               #stop profiling
+    stats = pstats.Stats(profiler)
+    stats.strip_dirs().sort_stats("tottime").print_stats(20)  #shows us the 20 slowest functions
+    profiler.dump_stats("profiling_results.prof")  # save the  results to a file
