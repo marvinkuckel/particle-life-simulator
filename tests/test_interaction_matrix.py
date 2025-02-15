@@ -3,6 +3,10 @@
 import pytest
 from src.interactions import InteractionMatrix
 from src.particle import Particle
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+
 
 def test_calculate_force_no_interaction():
     interaction_matrix = InteractionMatrix(num_types=4, max_radius=0.09, min_radius=0, global_repulsion=0)
