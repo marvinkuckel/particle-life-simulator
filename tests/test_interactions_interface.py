@@ -37,7 +37,7 @@ def test_handle_click():
     interface = InteractionsInterface(interaction_matrix, type_colors, (100, 100), 500)
 
     # Simulate a mouse scroll up event at position (150, 150)
-    mouse_pos = (150, 150)
+    mouse_pos = (270, 190)
     event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'pos': mouse_pos, 'button': 4})  # Scroll up event
 
     # Apply the click event to modify interaction value
