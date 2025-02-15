@@ -1,7 +1,9 @@
 import random
+import time
+import numpy as np
+
 from particle import Particle
 from interactions import InteractionMatrix, calculate_force
-import numpy as np
 
 
 class Simulation:
@@ -67,7 +69,10 @@ class Simulation:
         else:
             self.cells[(grid_x, grid_y)] = np.concatenate((self.cells[(grid_x, grid_y)], np.array([particle])))
 
+
     def update(self, dt):
+        start_time = time.time()
+
         # clears grid for updating particle positions in one step
         self.cells = {key: [] for key in self.cells}
 
@@ -98,7 +103,9 @@ class Simulation:
                                     p1.apply_force(force_x, force_y)
 
         self.enforce_boundaries()
-        
+        end_time = time.time()  # End time
+        print(f"Update duration: {end_time - start_time:.4f} seconds")  # Print duration
+
 
     def enforce_boundaries(self):
         # enforces boundaries if particles are out of bounds on either axis
