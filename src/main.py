@@ -1,6 +1,9 @@
 import sys
 
+import cProfile
+import pstats
 import pygame
+import time
 
 from gui import GUI
 from interactions import InteractionMatrix

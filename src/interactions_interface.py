@@ -32,7 +32,7 @@ class InteractionsInterface:
         """
         self.__draw_type_indicators(surface)
         for field_index, field_rect in self.fields.items():
-            interaction_value = self.interaction_matrix.interactions[field_index][0]
+            interaction_value = self.interaction_matrix.interactions[field_index]
             
             if interaction_value > 0:
                 # fade from black to green (attraction)
@@ -53,13 +53,15 @@ class InteractionsInterface:
         # create a small pygame.Rect at mouse position to receive dict item with corresponding InteractionMatrix key
         if result := pygame.Rect(event.pos, (1, 1)).collidedict(self.fields, values=True):
             key = result[0]
-            interaction_value = self.interaction_matrix.interactions[key][0]
+            interaction_value = self.interaction_matrix.interactions[key]
             
-            # event.button: 1 = left mouse button click; 2 = mouse wheel click; 3 = right mouse button click; 4 = mouse wheel up; 5 = mouse wheel down
-            if event.button in (1, 4) and interaction_value < 1:
-                self.interaction_matrix.interactions[key][0] = round(interaction_value + adjust_by, 2)  # prevent a force value grater than 1.0 due to float precision error
-            if event.button in (3, 5) and interaction_value > -1:
-                self.interaction_matrix.interactions[key][0] = round(interaction_value - adjust_by, 2)
+            # event.button: 1 = left mouse button click; 2 = mouse wheel click; 3 = right mouse button click
+            # 4 = mouse wheel up
+            if event.button == 4 and interaction_value < 1:
+                self.interaction_matrix.interactions[key] = round(interaction_value + adjust_by, 2)
+            # 5 = mouse wheel down
+            if event.button == 5 and interaction_value > -1:
+                self.interaction_matrix.interactions[key] = round(interaction_value - adjust_by, 2)
 
     def __initiate_fields(self):
         """
