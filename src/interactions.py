@@ -17,14 +17,6 @@ class InteractionMatrix:
             for j in range(num_types):
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
         
-        
-    def calculate_force(self, p1, p2):
-        return calculate_force_(
-            p1.position[0], p1.position[1], p1.type,
-            p2.position[0], p2.position[1], p2.type,
-            self.interactions, self.global_repulsion, self.max_radius, self.min_radius
-            )
-        
 @njit            
 def calculate_force_(px1: float, py1: float, type1: int, 
                      px2: float, py2: float, type2: int, 
