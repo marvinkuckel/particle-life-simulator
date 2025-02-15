@@ -29,6 +29,8 @@ class Main:
             'exit': lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),
             'set_sim_speed': self.simulation.adjust_time_factor,
             'get_sim_speed': self.simulation.get_time_factor,
+            'set_force_scaling': self.simulation.set_force_scaling,
+            'get_force_scaling': self.simulation.get_force_scaling,
             'set_particle_count': self.simulation.modify_particle_count,
             'get_particle_count': self.simulation.get_particle_count,
             'set_friction': self.simulation.set_friction,

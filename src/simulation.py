@@ -4,7 +4,7 @@ from interactions import InteractionMatrix, calculate_force
 import numpy as np
 
 class Simulation:
-    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles=1000, num_types=4, time_factor=0.1, grid_size=10):
+    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles=1000, num_types=4, time_factor=0.1, force_scaling=0.03):
         self.width, self.height = width, height
         # dynamically partitions simulation area into grid adjusted for screens aspect ratio
         # cells count & size scales with particle number (more particles = more & smaller cells)
@@ -14,6 +14,7 @@ class Simulation:
         self.num_particles = num_particles
         self.num_types = num_types
         self.time_factor = time_factor
+        self.force_scaling = force_scaling
         
         self.interaction_matrix = interaction_matrix
         self.particles = self.generate_particles()
@@ -29,7 +30,7 @@ class Simulation:
             particle = Particle(position=(random.random(), random.random()),
                                 velocity=(1 - random.random() * 2, 1 - random.random() * 2),
                                 type=i % self.num_types,
-                                size=1, friction=0.5, random_movement=0.01)
+                                size=1, friction=0.5, random_movement=0)
 
             particles = np.concatenate((particles, np.array([particle])))
             # place particle in grid cell corresponding to initial position
@@ -83,7 +84,7 @@ class Simulation:
                                         self.interaction_matrix.max_radius,
                                         self.interaction_matrix.min_radius
                                     )
-                                    p1.apply_force(force_x, force_y)
+                                    p1.apply_force(force_x, force_y, self.force_scaling)
 
         self.enforce_boundaries()
         
@@ -123,6 +124,13 @@ class Simulation:
         
     def get_time_factor(self):
         return self.time_factor
+    
+    
+    def set_force_scaling(self, force_scaling: float):
+        self.force_scaling = force_scaling
+        
+    def get_force_scaling(self):
+        return self.force_scaling
         
         
     def modify_particle_count(self, by: int):

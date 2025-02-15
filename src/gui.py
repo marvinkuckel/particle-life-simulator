@@ -96,6 +96,30 @@ class Button():
                 self.is_clicked = True
                 self.clicked_time = time.time()
                 self.size_factor = 0.95
+                
+                
+class Slider:
+    def __init__(self, left_x, right_x, center_y, min_value, max_value, setter: callable, getter: callable):
+        self.x = left_x
+        self.y = center_y
+        self.width = right_x - left_x
+        self.min_value, self.max_value = min_value, max_value
+        
+        self.slider_pos = self.x + self.width * (getter() - min_value)
+        
+        self.setter = setter
+        self.getter = getter
+        
+        self.rect = pygame.Rect(self.x, self.y - 5, self.x + self.width, self.y + 5)
+        print(self.rect)
+
+    def update(self, x_position):
+        self.slider_pos = x_position
+        self.setter((x_position - self.x) / self.width * (self.max_value - self.min_value))
+
+    def draw(self, surface):
+        pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x+self.width, self.y), 3)
+        pygame.draw.circle(surface, (0, 0, 0), (self.slider_pos, self.y), 5)
 
 class GUI:
     colors = {
@@ -121,6 +145,7 @@ class GUI:
         self.interaction_matrix = interaction_matrix
         
         self.text_fields = []
+        self.sliders = []
         
         self.buttons = []
         self.initiate_main_buttons(simulation_controlls, h_padding = self.padding)
@@ -252,7 +277,7 @@ class GUI:
         section_width = self.screen_width - self.control_panel_width//2 - relative_x - 10
         center_x = relative_x + section_width//2 + 10
         
-        # simulation speed
+        # ------ simulation speed ------
         font_size = font.size("0.000")
         options = [-0.25, -0.1, -0.02, 0.02, 0.1, 0.25]
         button_size = (section_width - font_size[0] - 20) // len(options)
@@ -271,13 +296,24 @@ class GUI:
         setting_name = Text("Simulation Speed", 30, (center_x, self.buttons[-1].rect.top - 20))
         setting_value = Text("0.0000", 24, (center_x, self.buttons[-1].rect.center[1]), get_value=simulation_controls['get_sim_speed'], length=6)
         self.text_fields.extend((setting_name, setting_value))
+        
+        # ----- force factor -----
+        self.sliders.append(Slider(relative_x, relative_x + section_width, self.buttons[-1].rect.center[1] + 40, 0.0001, 0.1,
+                                   simulation_controls['set_force_scaling'], simulation_controls['get_force_scaling']))
 
     def button_click(self, event):
-        self.interactions_interface.handle_click(event)
-        
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
                 button.trigger(event)
+                return
+        
+        for slider in self.sliders:
+            if slider.rect.collidepoint(event.pos):
+                print(event.pos)
+                slider.update(event.pos[0])
+                return
+        
+        self.interactions_interface.handle_click(event)
                 
     def draw_control_panel(self, mouse_pos):
         pygame.draw.rect(self.screen, self.colors['panel-background'],
@@ -290,6 +326,9 @@ class GUI:
         
         for button in self.buttons:
             button.draw(self.screen, mouse_pos)
+            
+        for slider in self.sliders:
+            slider.draw(self.screen)
             
         self.interactions_interface.draw(self.screen, mouse_pos)
 
