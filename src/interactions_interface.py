@@ -3,25 +3,24 @@ from typing import List, Tuple
 import pygame
 
 class InteractionsInterface:
-    def __init__(self, interaction_matrix, relative_position: Tuple[int, int], panel_width: int, padding: int, type_colors: List[Tuple[int, int, int]]):
+    def __init__(self, interaction_matrix, type_colors: List[Tuple[int, int, int]], top_left: Tuple[int, int], right: int):
         """
         Serves as an interface between GUI and InteractionMatrix class.<br>
         Provides the visual representation of InteractionMatrix and the ability to alter the strength of force between particle types.
         
         params:
           interaction_matrix: InteractionMatrix object
-          relative_position: Coordinates of top-left corner
-          panel_width: Width of control panel to determine the size of InteractionsInterface depending on padding
-          padding: to make the interface smaller
-          type_colors: list containing the color of each type
+          type_colors: list containing the colors of each type
+          top_left (x, y): relative position/coordinate the matrix is drawn to
+          right: x-coordinate to which the matrix extends (determining width and height of matrix)
         """
         self.interaction_matrix = interaction_matrix
-        self.relative_position = relative_position[0] + 2*padding - 62, relative_position[1]
+        self.relative_position = top_left
         self.type_colors = type_colors
         
         # calculate how big each field has to be
         num_types = self.interaction_matrix.number_of_types
-        self.field_size = (panel_width - 2*padding) / (num_types+1)
+        self.field_size = abs(top_left[0] - right) / (num_types+1)
         
         self.__initiate_fields()
 
@@ -73,6 +72,7 @@ class InteractionsInterface:
         field_size = self.field_size
         types = self.interaction_matrix.number_of_types
 
+        # i = row; j = col
         self.fields = {(i, j): pygame.Rect(rel_x + (j+1)*field_size,
                                            rel_y + (i+1)*field_size,
                                            field_size, field_size)
@@ -83,9 +83,9 @@ class InteractionsInterface:
         """
         rel_x, rel_y = self.relative_position
         radius = self.field_size * 0.2  # size of indicator
-        spacing = self.field_size       # column/row size
+        spacing = self.field_size       # column width / row height
         
-        # put center of indicator in the middle of rows/cols
+        # put center of indicator in the middle of each rows/cols
         rel_x, rel_y = rel_x + spacing/2, rel_y + spacing/2
         
         for i, color in enumerate(self.type_colors, start=1):

@@ -76,19 +76,21 @@ class GUI:
             'christmas-blue': (0, 30, 250)
         }
     
-    def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict):
+    def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict, padding: int = 60):
         self.screen = screen
         self.screen_width, self.screen_height = screen_width, screen_height
         self.control_panel_width = screen_width - screen_height
+        self.padding = padding  # distance between panel elementens and panel boundaries/borders
         
         self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
         self.interaction_matrix = interaction_matrix
         
         self.buttons = []
-        self.initiate_buttons(simulation_controlls)
+        self.initiate_buttons(simulation_controlls, h_padding = self.padding)
 
-        self.interactions_interface = InteractionsInterface(interaction_matrix, (screen_width-self.control_panel_width, self.buttons[-1].rect.bottom),
-                                                            self.control_panel_width, 200, self.particle_colors)
+        self.interactions_interface = InteractionsInterface(interaction_matrix, self.particle_colors,
+                                                            top_left = (screen_width - self.control_panel_width//2, self.buttons[-1].rect.bottom),
+                                                            right = self.screen_width - self.padding)
 
         if self.interactions_interface.fields:
             last_field_bottom = list(self.interactions_interface.fields.values())[-1].bottom
@@ -137,7 +139,9 @@ class GUI:
             "Start": self.colors['christmas-green'],
             "Stop": self.colors['christmas-gold'],
             "Reset": self.colors['christmas-red'],
-            "Exit": self.colors['christmas-blue']
+            "Exit": self.colors['christmas-blue'],
+            "attraction": (0, 224, 0),
+            "repulsion": (224, 0, 0)
         }
 
         instruction_parts = [
@@ -145,12 +149,14 @@ class GUI:
             "While they are moving, you can press Stop to pause the simulation.",
             "To clear the screen and restart, use Reset button.",
             "Click Exit to leave the simulation.",
-            "Thank you!"
+            "Thank you!",
+            "",
+            "_____ Matrix Controls _____",
+            "Increase attraction - left mouse button / scroll upwards",
+            "Increase repulsion - right mouse button / scroll downwards"
         ]
 
-        total_text_height = sum(font.get_height() + 10 for line in instruction_parts) + header_font.get_height()
-
-        y_offset = self.instruction_rect.top + 80
+        y_offset = self.instruction_rect.top + 70
 
         x_offset = self.instruction_rect.left - 20
 
@@ -174,7 +180,10 @@ class GUI:
 
                 centered_x_offset += word_surface.get_width() + font.size(" ")[0]
 
-            y_offset += font.get_height() + 15
+            y_offset += font.get_height() + 13
+            
+        # set the height so the text fits inside
+        self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
 
     def initiate_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
