@@ -1,4 +1,3 @@
-
 import unittest
 from unittest.mock import MagicMock
 import pygame
@@ -56,9 +55,13 @@ class TestInteractionsInterface(unittest.TestCase):
         self.interface.handle_click(event)
         self.assertEqual(self.interaction_matrix.interactions[(0, 0)], -1)
 
+        self.interaction_matrix.interactions[(0, 0)] = 1
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'pos': (150, 150), 'button': 4})
+        self.interface.handle_click(event)
+        self.assertEqual(self.interaction_matrix.interactions[(0, 0)], 1)
+
     def tearDown(self):
         pygame.quit()
 
 if __name__ == '__main__':
     unittest.main()
-```
