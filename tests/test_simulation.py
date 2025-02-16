@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 from particle import Particle
-from interactions import InteractionMatrix, calculate_force
-from simulation import Simulation
+from src.interactions import InteractionMatrix, calculate_force
+from src.simulation import Simulation
 import sys
 sys.path.insert(0, 'src')
 from particle import Particle
