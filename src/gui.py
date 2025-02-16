@@ -147,7 +147,8 @@ class Button():
             pos = self.rect.topleft
             screen.blit(self.image, (pos[0] + 5, pos[1] + 5))
         else:
-            text_surface = self.font.render(self.text, True, (255, 255, 255))
+            text_color = (0, 0, 0) if self.text in ["Start", "Stop", "Reset", "Exit"] else (255, 255, 255)
+            text_surface = self.font.render(self.text, True, text_color)
             text_rect = text_surface.get_rect(center=rect.center)
             screen.blit(text_surface, text_rect)
 
@@ -216,16 +217,21 @@ class GUI:
 
     # Define colors in Christmas theme
     colors = {
-            'simulation-background': (20, 20, 25),
-            'panel-background': (25, 25, 35),
-            'normal-button': (40, 40, 40),
+            'simulation-background': (0, 0, 0),
+            'panel-background': (40, 40, 40),
+            'normal-button': (80, 80, 80),
             'christmas-red': (220, 20, 60),
             'christmas-darkred': (150, 25, 30),
             'christmas-green': (0, 128, 0),
             'christmas-white': (255, 255, 255),
             'christmas-gold': (204, 153, 1),
             'christmas-grey': (80, 90, 120),
-            'christmas-blue': (0, 30, 250)
+            'christmas-blue': (0, 30, 250),
+            'easter-yellow': (246, 255, 181),
+            'easter-green': (163, 217, 165),
+            'easter-pink': (255, 171, 171),
+            'easter-red': (255, 103, 125),
+            'easter-lilac': (200, 181, 228)
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict, padding: int = 60):
@@ -243,7 +249,7 @@ class GUI:
         self.control_panel_width = screen_width - screen_height
         self.padding = padding  # distance between panel elementens and panel boundaries/borders
         
-        self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white','christmas-blue']]
+        self.particle_colors = [self.colors[key] for key in ['easter-green','easter-red','easter-yellow','easter-lilac','easter-pink']]
         self.interaction_matrix = interaction_matrix
         
         self.text_fields = []
@@ -282,7 +288,9 @@ class GUI:
 
         y_offset = self.instruction_rect.top + 10
 
-        header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]  # Define header parts
+
+        header_parts = ["Welcome to the easter", "Particle", "Life", "Simulator", "!"]  # Define header parts
+
         segment_colors = [
             self.colors['christmas-white'],
             self.colors['christmas-red'],
@@ -311,10 +319,10 @@ class GUI:
         y_offset += header_font.get_height()  # Move y_offset down by the height of the header font
 
         color_words = {
-            "Start": self.colors['christmas-green'],
-            "Stop": self.colors['christmas-gold'],
-            "Reset": self.colors['christmas-red'],
-            "Exit": self.colors['christmas-blue'],
+            "Start": self.colors['easter-green'],
+            "Stop": self.colors['easter-yellow'],
+            "Reset": self.colors['easter-red'],
+            "Exit": self.colors['easter-lilac'],
             "attraction": (0, 224, 0),
             "repulsion": (224, 0, 0)
         }
@@ -374,12 +382,20 @@ class GUI:
         button_x = self.screen_width - self.control_panel_width + h_padding
         button_y = 50
 
+
         # Add buttons to the list
+        self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['easter-green'], simulation_controlls['start']))
+        self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['easter-yellow'], simulation_controlls['stop']))
+        self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['easter-red'], simulation_controlls['reset']))
+        self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['easter-lilac'], simulation_controlls['exit']))
+
+       
 
         self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
+
 
     def initiate_secondary_buttons(self, simulation_controls):
         """Buttons for managing parameters influencing the particle interactions
