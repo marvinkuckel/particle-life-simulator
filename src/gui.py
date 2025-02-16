@@ -247,6 +247,7 @@ class GUI:
             
         # set the height so the text fits inside
         self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
+        self.instruction_rect.bottom = self.screen_height - 10
 
     def initiate_main_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
@@ -270,7 +271,7 @@ class GUI:
         Call this method after creating interactions_interface"""
         font = pygame.font.Font(None, 32)
         
-        relative_x = self.screen_width - self.control_panel_width + self.padding
+        relative_x = self.screen_width - self.control_panel_width + self.padding//2
         relative_y = self.buttons[-1].rect.bottom + 70
         
         section_width = self.screen_width - self.control_panel_width//2 - relative_x - 10
@@ -299,35 +300,35 @@ class GUI:
         relative_x += 14
         
         # ----- force scaling -----
-        y = self.buttons[-1].rect.bottom + 40
-        self.text_fields.append(Text("Force Scaling", 24, center=(relative_x + section_width//4 - 7, y)))
+        y = self.buttons[-1].rect.bottom + 30
+        self.text_fields.append(Text("Force Scaling", 20, center=(relative_x + section_width//4 - 7, y)))
         self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.00000001, 0.01,
                                    simulation_controls['set_force_scaling'], simulation_controls['get_force_scaling']))
         
         # ----- friction -----
-        self.text_fields.append(Text("Friction", 24, center=(relative_x + section_width*3//4 - 7, y)))
+        self.text_fields.append(Text("Friction", 20, center=(relative_x + section_width*3//4 - 7, y)))
         self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0, 1,
                                    simulation_controls['set_friction'], simulation_controls['get_friction']))
         
         # ----- random movement ----
-        y = self.sliders[-1].rect.bottom + 40
-        self.text_fields.append(Text("Random Movement", 24, center=(relative_x + section_width//4 - 7, y)))
+        y = self.sliders[-1].rect.bottom + 30
+        self.text_fields.append(Text("Random Movement", 20, center=(relative_x + section_width//4 - 7, y)))
         self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.0001, 0.001,
                                    simulation_controls['set_random_movement'], simulation_controls['get_random_movement']))
         
         # ----- global repulsion -----
-        self.text_fields.append(Text("Global Repulsion", 24, center=(relative_x + section_width*3//4 - 7, y)))
+        self.text_fields.append(Text("Global Repulsion", 20, center=(relative_x + section_width*3//4 - 7, y)))
         self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0.00001, 0.001,
                                    self.interaction_matrix.set_global_repulsion, self.interaction_matrix.get_global_repulsion))
         
         # ----- min radius -----
-        y = self.sliders[-1].rect.bottom + 40
-        self.text_fields.append(Text("Min Radius", 24, center=(relative_x + section_width//4 - 7, y)))
+        y = self.sliders[-1].rect.bottom + 30
+        self.text_fields.append(Text("Min Radius", 20, center=(relative_x + section_width//4 - 7, y)))
         self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.0000000001, 0.01,
                                    self.interaction_matrix.set_min_radius, self.interaction_matrix.get_min_radius))
         
         # ----- max radius -----
-        self.text_fields.append(Text("Max Radius", 24, center=(relative_x + section_width*3//4 - 7, y)))
+        self.text_fields.append(Text("Max Radius", 20, center=(relative_x + section_width*3//4 - 7, y)))
         self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0.01, 0.2,
                                    self.interaction_matrix.set_max_radius, self.interaction_matrix.get_max_radius))
         
