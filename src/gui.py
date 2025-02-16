@@ -147,9 +147,9 @@ class Slider:
 
 class GUI:
     colors = {
-            'simulation-background': (20, 20, 25),
-            'panel-background': (25, 25, 35),
-            'normal-button': (40, 40, 40),
+            'simulation-background': (0, 0, 0),
+            'panel-background': (40, 40, 40),
+            'normal-button': (80, 80, 80),
             'christmas-red': (220, 20, 60),
             'christmas-darkred': (150, 25, 30),
             'christmas-green': (0, 128, 0),
