@@ -389,12 +389,6 @@ class GUI:
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['easter-red'], simulation_controlls['reset']))
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['easter-lilac'], simulation_controlls['exit']))
 
-       
-
-        self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
-        self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
-        self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
-        self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
 
 
     def initiate_secondary_buttons(self, simulation_controls):
