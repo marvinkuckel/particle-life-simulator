@@ -167,12 +167,12 @@ class GUI:
         pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
         pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
 
-        font = pygame.font.Font(None, 23)
-        header_font = pygame.font.Font(None, 28)
+        font = pygame.font.Font(None, 18)
+        header_font = pygame.font.Font(None, 23)
         header_font.set_bold(True)
         header_font.set_italic(True)
         
-        y_offset = self.instruction_rect.top + 25
+        y_offset = self.instruction_rect.top + 10
 
         header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]
         segment_colors = [
@@ -219,7 +219,7 @@ class GUI:
             "Increase repulsion - right mouse button / scroll downwards"
         ]
 
-        y_offset = self.instruction_rect.top + 70
+        y_offset = self.instruction_rect.top + 30
 
         x_offset = self.instruction_rect.left - 20
 
@@ -243,7 +243,7 @@ class GUI:
 
                 centered_x_offset += word_surface.get_width() + font.size(" ")[0]
 
-            y_offset += font.get_height() + 13
+            y_offset += font.get_height() + 5
             
         # set the height so the text fits inside
         self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
@@ -302,7 +302,7 @@ class GUI:
         # ----- force scaling -----
         y = self.buttons[-1].rect.bottom + 30
         self.text_fields.append(Text("Force Scaling", 20, center=(relative_x + section_width//4 - 7, y)))
-        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.00000001, 0.01,
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.0001, 0.1,
                                    simulation_controls['set_force_scaling'], simulation_controls['get_force_scaling']))
         
         # ----- friction -----
