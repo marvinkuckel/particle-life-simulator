@@ -1,7 +1,7 @@
 import unittest
 import random
 import pygame
-from particle import Particle
+from  src.particle import Particle
 
 class TestParticle(unittest.TestCase):
     def setUp(self):
