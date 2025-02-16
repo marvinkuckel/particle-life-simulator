@@ -1,5 +1,7 @@
 import unittest
 from src.particle import Particle
+from unittest.mock import MagicMock
+
 
 class TestParticle(unittest.TestCase):
     def setUp(self):
