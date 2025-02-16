@@ -302,7 +302,7 @@ class GUI:
         # ----- force scaling -----
         y = self.buttons[-1].rect.bottom + 20
         self.text_fields.append(Text("Force Scaling", 18, center=(relative_x + section_width//4 - 7, y)))
-        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0.01, 1,
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0.001, 1,
                                    simulation_controls['set_force_scaling'], simulation_controls['get_force_scaling']))
         
         # ----- friction -----
@@ -324,12 +324,12 @@ class GUI:
         # ----- min radius -----
         y = self.sliders[-1].rect.bottom + 20
         self.text_fields.append(Text("Min Radius", 18, center=(relative_x + section_width//4 - 7, y)))
-        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0.00001, 0.01,
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0.00001, 0.049,
                                    self.interaction_matrix.set_min_radius, self.interaction_matrix.get_min_radius))
         
         # ----- max radius -----
         self.text_fields.append(Text("Max Radius", 20, center=(relative_x + section_width*3//4 - 7, y)))
-        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 20, self.text_fields[-1].rect.bottom + 10, 0.05, 0.2,
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 20, self.text_fields[-1].rect.bottom + 10, 0.05, 0.3,
                                    self.interaction_matrix.set_max_radius, self.interaction_matrix.get_max_radius))
         
     def button_click(self, event):
