@@ -31,7 +31,6 @@ class InteractionsInterface:
             for i in range(num_types) for j in range(num_types)  # i = row; j = col
         }
 
-
     def draw(self, surface, mouse_pos):
         """Draws the whole InteractionsInterface including type-indicators and current state of InteractionMatrix
         
