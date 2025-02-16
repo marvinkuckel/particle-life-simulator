@@ -1,14 +1,14 @@
 Dear User,
 
-To run the simulation, you can simply execute "src/main.py" with python. In this file you can also adjust the number of particles with n_particles and the number of types with n_types.
+To run the simulation, you can simply execute "src/main.py" with python. In this file you can also set the starting parameters in the simulation_parameters dictionary.
 
 After that, a Pygame window will open, with the graphics depending on the screen size, so you might have a different resolution.
 
 In the opened Pygame window, you have many options to control the simulation, both through the buttons and the interactive panel. The buttons allow you to start, stop, reset, and exit the simulation.
 
-With the panel, you can configure the simulation speed, force, friction, randomness in movement, general attraction, and the minimum and maximum radius in real-time. The radius defines the surrounding area of the particles where forces can act.
+With the panel, you can configure the simulation speed, force scaling, friction, randomness in movement, general repulsion, and the minimum and maximum radius in real-time. The radius defines the surrounding area of the particles where forces can act. The closer these two values are to each other, the greater the force will be.
 
-Additionally, you can decide how the particles should interact. By hovering over a matrix field, you can either increase attraction with the left mouse button/scroll up or increase repulsion with the right mouse button/scroll down. The axes will indicate which interactions you are currently controlling.
+Additionally, you can decide how the particles should interact. By hovering over a matrix field, you can either increase attraction with the left mouse button/scroll up or increase repulsion with the right mouse button/scroll down. The axes will indicate which interactions you are currently controlling. The colors on the top, indicating the types, are acting a force on the color on the left.
 
 We – Lilith, Beliz, Marc, Marvin, Nevriye – wish you an enjoyable time with the simulation!
 
