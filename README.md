@@ -14,6 +14,8 @@ Additionally, you can decide how the particles should interact. By hovering over
 
 We – Lilith, Beliz, Marc, Marvin, Nevriye – wish you an enjoyable time with the simulation!
 
+![Example](https://github.com/marvinkuckel/particle-life-simulator/blob/Documentations/Example.png?raw=true)
+
 ___________________________________________________________________________________________________________________________________________________
 
 
