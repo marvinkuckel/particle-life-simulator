@@ -31,7 +31,14 @@ The code is divided into six files:
 
 The `__init__.py` file connects the individual modules.
 
-At the bottom, you will find a diagram that visualises the relationships between the classes.
+In the figure below, you can see the flowchart and the relationships between the files and methods.
+
+The most important loop of the code structure is shown. If run is executed, the four methods on the left-hand side are always executed one after the other (while True).
+With each run, the attraction, positions, etc. of the particles and the status of the control_panel are updated.
+
+
+![Flowchart](https://github.com/marvinkuckel/particle-life-simulator/blob/Documentations/Flowchart.png?raw=true)
+
 
 ## Simulation Results  
 The code functions as expected, with particles displaying emergent behavior. The forces can be dynamically adjusted.  
@@ -105,3 +112,4 @@ The repository is private; no license has been determined yet.
 
 ## Troubleshooting  
 Performance may decrease if the number of particles exceeds 10,000.
+To improve performance, try reducing the number of particles. Additionally, you can optimize the particle update logic by simplifying calculations or using more efficient data structures. Make sure your system has enough resources, such as CPU, GPU, and RAM, to handle a large number of particles.
