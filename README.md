@@ -1,5 +1,7 @@
 Dear User,
 
+To install the needed python libraries you can run `pip install -r requirements.txt` while beeing in the root directory.
+
 To run the simulation, you can simply execute "src/main.py" with python. In this file you can also set the starting parameters in the simulation_parameters dictionary.
 
 After that, a Pygame window will open, with the graphics depending on the screen size, so you might have a different resolution.
