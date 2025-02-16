@@ -51,12 +51,12 @@ The following software versions were used:
 - Pygame **2.5.2**  
 
 Required libraries:  
-`random, pygame, typing, time, math, numba, numpy, sys, cProfile, pstats`  
+`pygame, numba, numpy`  
 
 To install locally via Git Bash:  
 `git clone https://github.com/marvinkuckel/particle-life-simulator`  
 
-## Configuration  
+## Configuration
 Adjustable parameters:  
 - In `particle.py`:  
   - Number of types  
