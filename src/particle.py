@@ -1,9 +1,9 @@
 import random
 import pygame
 
-
 class Particle:
     def __init__(self, type: int, size: int, position: tuple, velocity: tuple, friction: float, force_scaling: float, random_movement: float):
+
         self.type = type
         self.size = size
         self.position = position
@@ -13,16 +13,19 @@ class Particle:
         self.random_movement = random_movement
         self.last_render_position = tuple(position) # tracks particles last rendered position
 
-
     def apply_force(self, force_x, force_y):
         # applies force and the scaling factor to current velocity
         self.velocity = [self.velocity[0] + force_x*self.force_scaling, self.velocity[1] + force_y*self.force_scaling]
 
-
     def update_position(self, dt, time_factor):
-        # update velocity based on applied friction
-        self.velocity = [self.velocity[0] * (1 - self.friction),
-                        self.velocity[1] * (1 - self.friction)]
+        """
+        Reduces the velocity of the particle based on its friction.
+        Updates the position of the particle based on its velocity and friction.
+        dt: Time since the last update.
+        time_factor: Scaling factor to adjust the speed of the simulation.
+        """
+        self.velocity = [self.velocity[0] * (1 - self.friction),  # Reduce velocity in x direction based on friction
+                        self.velocity[1] * (1 - self.friction)]  # Reduce velocity in y direction based on friction
 
         # update position based on new velocity
         self.position = [self.position[0] + self.velocity[0] * dt * time_factor,
@@ -50,5 +53,4 @@ class Particle:
 
         # draws the particle
         pygame.draw.circle(screen, color, (draw_x, draw_y), self.size)
-        
-    
+

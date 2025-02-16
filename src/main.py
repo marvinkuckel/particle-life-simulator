@@ -1,5 +1,4 @@
 import sys
-
 import cProfile
 import pstats
 import pygame
@@ -8,7 +7,6 @@ import time
 from gui import GUI
 from interactions import InteractionMatrix
 from simulation import Simulation
-
 
 # centralizes adjustment of all relevant parameters
 simulation_parameters = {
@@ -27,7 +25,10 @@ simulation_parameters = {
 class Main:
     
     def __init__(self):
+
         pygame.init()
+        
+        # Set up the clock to control the frame rate of the simulation
         self.clock = pygame.time.Clock()
         
         # adjusts the window size to fit the current screen resolution
@@ -73,6 +74,7 @@ class Main:
             'remove_particles': self.simulation.remove_particles
         }
         
+        # Create the GUI, passing in the necessary details such as screen dimensions, the interaction matrix, and the simulation controls
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)
 
     def handle_events(self):
@@ -85,21 +87,27 @@ class Main:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.gui.button_click(event)
 
-    def run(self, fps: int):
+    def run(self, fps: int):  # Define the main game loop
+        """
+        Runs the main game loop, continuously updating and rendering the simulation.
+        The game loop handles all user input and events, updates the simulation if it's not paused, 
+        and renders the simulation's particles and GUI elements on the screen. 
+        It also refreshes the display to show the latest frame.
+        """
         self.running = True
         
-        while self.running:
-            self.handle_events()
-            dt = self.clock.tick(fps) / 1000  # time passed since last call in ms
+        while self.running:  # While the game is running
+            self.handle_events()  # Handle user input
+            dt = self.clock.tick(fps) / 1000  # Time passed since last call in ms
             
-            if not self.simulation.paused:
-                self.simulation.update(dt)
-                self.gui.draw_particles(self.simulation.particles)
+            if not self.simulation.paused:  # If the simulation is not paused ...
+                self.simulation.update(dt)  # ... update the simulation and ...
+                self.gui.draw_particles(self.simulation.particles)  # ... draw the particles
             
-            mouse_pos = pygame.mouse.get_pos()
-            self.gui.draw_control_panel(mouse_pos)
+            mouse_pos = pygame.mouse.get_pos()  # Get the current mouse position
+            self.gui.draw_control_panel(mouse_pos)  # Draw the control panel with the current mouse position
 
-            pygame.display.flip()
+            pygame.display.flip()  # Updates the entire screen to show the latest drawing changes (Refresh)
 
 if __name__ == "__main__":
     app = Main()
