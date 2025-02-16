@@ -139,7 +139,7 @@ class Simulation:
         if len(self.particles) == 0:  # If there are no particles ...
             self.particles = self.generate_particles()  # ... generate particles
 
-    def stop_simulation(self):https://github.com/marvinkuckel/particle-life-simulator/pull/85/conflict?name=src%252Fsimulation.py&ancestor_oid=cd722cfe629ead6b3b88e18d0b4ae9af3d1b0f14&base_oid=7a259b51d4e40a22e9c50908d58372e693e3ec3c&head_oid=c58b458f50ee15159577fc66c742b4415fa1cc7c
+    def stop_simulation(self):
         """
         Pauses the simulation.
         """
