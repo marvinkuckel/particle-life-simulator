@@ -1,54 +1,82 @@
 import os
 from typing import Tuple
 import time
-
 import pygame
-
 from interactions_interface import InteractionsInterface
 
 class Text:
-    """Simple text that can be updated by a get function and drawn in draw_control_panel"""
-    def __init__(self, text, font_size, center, font_color = (255, 255, 255), get_value: callable = None, length = None):
-        self.text = text
-        self.length = length
-        self.get_value = get_value
+    """
+    A simple text display that can be updated dynamically using a getter function 
+    and drawn on a screen or surface.
+    """
+    
+    def __init__(self, text, font_size, center, font_color=(255, 255, 255), get_value: callable=None, length=None):
+        """
+        Initializes the Text object.
+        text (str): The initial static text to be displayed.
+        font_size (int): The size of the font to be used for rendering the text.
+        center (tuple): The (x, y) coordinates to center the text on the screen.
+        font_color (tuple): The color of the font (default is white).
+        get_value (callable): A function that provides a value to be displayed dynamically (optional).
+        length (int): The length to ensure the text is padded or truncated to (optional).
+        """
+        self.text = text  # The static text value
+        self.length = length  # The optional fixed length for the text
+        self.get_value = get_value  # The callable to get dynamic values (if provided)
         
-        self.font = pygame.font.Font(None, font_size)
-        self.font_color = font_color
+        self.font = pygame.font.Font(None, font_size)  # Load the font with the given size
+        self.font_color = font_color  # Set the color of the font
         
+        # Render the initial text
         self.rendered_text = self.font.render(text, True, font_color)
+        # Get the rectangle for positioning the text on the screen
         self.rect = self.rendered_text.get_rect(center=center)
     
     def draw(self, screen):
+        """
+        Draws the rendered text onto the provided screen.
+
+        Parameters:
+        screen (pygame.Surface): The screen or surface where the text will be drawn.
+        """
         screen.blit(self.rendered_text, self.rect)
         
     def set_text(self, text):
+        """
+        Updates the text that is displayed, and re-renders it with the current font color.
+        text (str): The new text to display.
+        """
         self.rendered_text = self.font.render(text, True, self.font_color)
+        # Optionally, you can update the text rectangle if its position needs to be adjusted.
         #self.rect = self.rendered_text.get_rect(center=self.rect.center)
         
     def update(self):
+        """
+        Updates the text to display the latest value if a getter function is provided.
+        The displayed value is rounded to 4 decimal places. It can also ensure the text 
+        length is fixed if the 'length' attribute is set.
+        """
         if self.get_value:
-            text = str(round(self.get_value(), 4))
+            text = str(round(self.get_value(), 4))  # Get the value from the getter and round it
             
-            # keep text the same length
+            # If a length is specified, adjust the text length by adding zeros or truncating
             if self.length:
                 while len(text) < self.length:
-                    text = text + "0"
+                    text = text + "0"  # Pad with zeros if the length is shorter
                 if len(text) > self.length:
-                    text = text[:self.length]
+                    text = text[:self.length]  # Truncate if the length exceeds
                 
-            self.set_text(text)
-
+            self.set_text(text)  # Update the text to the new value
 
 class Button():
     def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36, image_name = None):
+
         """
-        params:
-            pos: (x, y) coordinates of buttons top-left corner
-            size: (x, y) width and height of the button
-            text: Text displayed on the button
-            color: (r, g, b) Default color of the button
-            action: execute event if button is clicked
+        pos: (x, y) coordinates of the top-left corner of the button
+        size: (width, height) of the button
+        text: text displayed on the button
+        color: color of the button
+        action: function to be called when the button is clicked
         """
         self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.text = text
@@ -56,8 +84,8 @@ class Button():
         self.font = pygame.font.Font(None, font_size)
         self.action = action
         self.original_color = color
-        self.hover_color = self.lighten_color(color, factor=2)
-        self.clicked_color = self.darken_color(color, factor=0.7)
+        self.hover_color = self.lighten_color(color, factor=2)  # hover color
+        self.clicked_color = self.darken_color(color, factor=0.7)  # clicked color
         self.is_clicked = False
         self.clicked_time = 0
         self.size_factor = 1
@@ -79,31 +107,41 @@ class Button():
                     self.image = pygame.transform.scale(self.image, size)
                 except:
                     print("Image could not be loaded. Displaying text instead")
-                    
 
     def lighten_color(self, color, factor):
-        return tuple(min(int(c * factor), 255) for c in color)
+        """
+        Lightens a color by a given factor.
+        """
+        return tuple(min(int(c * factor), 255) for c in color)  # Iterates over the color components and applies the factor
     
     def darken_color(self, color, factor):
-        return tuple(max(int(c * factor), 0) for c in color)
+        """
+        Darkens a color by a given factor.
+        """
+        return tuple(max(int(c * factor), 0) for c in color)  # Iterates over the color components and applies the factor
 
     def draw(self, screen, mouse_pos):
-        if self.is_clicked and time.time() - self.clicked_time > 0.3:
-            self.is_clicked = False
-            self.size_factor = 1
+        """
+        Draws the button on the given Pygame screen.
+        screen: Pygame screen to draw on.
+        mouse_pos: Mouse position.
+        """
+        if self.is_clicked and time.time() - self.clicked_time > 0.3:  # If the button is clicked ...
+            self.is_clicked = False  # ... reset the clicked  ...
+            self.size_factor = 1  # ... and reset the size factor
 
-        if self.rect.collidepoint(mouse_pos):
-            current_color = self.hover_color
-        else:
-            current_color = self.color
+        if self.rect.collidepoint(mouse_pos):  # If the mouse is over the button ...
+            current_color = self.hover_color  # ... set the hover color
+        else:  # Otherwise ...
+            current_color = self.color  # ... set the original color
 
-        width = int(self.rect.width * self.size_factor)
-        height = int(self.rect.height * self.size_factor)
-        rect = pygame.Rect(self.rect.x + (self.rect.width - width) // 2, 
-                        self.rect.y + (self.rect.height - height) // 2, width, height)
+        width = int(self.rect.width * self.size_factor)  # Scale the button width
+        height = int(self.rect.height * self.size_factor)  # Scale the button height
+        rect = pygame.Rect(self.rect.x + (self.rect.width - width) // 2,  # Center the button in the x-direction
+                        self.rect.y + (self.rect.height - height) // 2, width, height)  # Center the button in the y-direction
 
-        pygame.draw.rect(screen, current_color, rect)
-        pygame.draw.rect(screen, (0, 0, 0), rect, 3)
+        pygame.draw.rect(screen, current_color, rect)  # Draw the button with the current color
+        pygame.draw.rect(screen, (0, 0, 0), rect, 3)  # Draw the button border
 
         if self.image:
             pos = self.rect.topleft
@@ -114,37 +152,69 @@ class Button():
             screen.blit(text_surface, text_rect)
 
     def trigger(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:  # mouse-click?
-            if self.rect.collidepoint(event.pos):  # mouse-click within button?
-                if self.action:  # if there is an action, ...
-                    self.action()  # trigger it.
-                self.is_clicked = True
-                self.clicked_time = time.time()
-                self.size_factor = 0.95
-
+        """
+        Triggers the button action when it is clicked.
+        """
+        if event.type == pygame.MOUSEBUTTONDOWN:  # If the mouse button is pressed ...
+            if self.rect.collidepoint(event.pos):  # and the mouse is over the button ...
+                if self.action:  # ... and the button has an action ...
+                    self.action()  # ... trigger the action
+                self.is_clicked = True  # Set the clicked flag
+                self.clicked_time = time.time()  # Record the time when the button was clicked
+                self.size_factor = 0.95  # Scale the button down (size_factor < 1 fort depth effect)
 
 class Slider:
     def __init__(self, left_x, right_x, center_y, min_value, max_value, setter: callable, getter: callable):
-        self.x, self.y = left_x, center_y
-        self.min_value, self.max_value = min_value, max_value
-        self.setter, self.getter = setter, getter
-        
-        self.width = right_x - left_x
+        """
+        Initializes the Slider object.
+        left_x (int): The x-coordinate of the left side of the slider.
+        right_x (int): The x-coordinate of the right side of the slider.
+        center_y (int): The y-coordinate of the center of the slider.
+        min_value (int or float): The minimum value the slider can represent.
+        max_value (int or float): The maximum value the slider can represent.
+        setter (callable): A function that sets the value of the slider.
+        getter (callable): A function that gets the current value of the slider.
+        """
+        self.x, self.y = left_x, center_y  # Position of the slider
+        self.min_value, self.max_value = min_value, max_value  # Min and max values of the slider
+        self.setter, self.getter = setter, getter  # Setter and getter functions
+
+        self.width = right_x - left_x  # Calculate the width of the slider
+        # Calculate the initial position of the slider based on the current value
         self.slider_pos = self.x + self.width * (getter() / max_value - min_value)
-        self.rect = pygame.Rect(self.x - 7, self.y - 7, self.width + 14, 14)
+        self.rect = pygame.Rect(self.x - 7, self.y - 7, self.width + 14, 14)  # The rectangle for the slider's hitbox
         
     def update(self, x_position):
+        """
+        Updates the position of the slider and its value based on the new x position.
+        x_position (int): The new x position of the slider's knob.
+        """
+        # Restrict the slider's position within the valid range
         self.slider_pos = min(max(x_position, self.x), self.x + self.width)
+        # Calculate the new value for the slider based on its position
         value = (x_position - self.x) / self.width * (self.max_value - self.min_value)
+        # Set the value of the slider within the min and max range
         self.setter(max(min(value, self.max_value), self.min_value))
 
     def draw(self, surface):
-        pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x+self.width, self.y), 3)
+        """
+        Draws the slider on the given surface.
+        surface (pygame.Surface): The surface where the slider will be drawn.
+        """
+        # Draw the slider track (line)
+        pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x + self.width, self.y), 3)
+        # Draw the slider knob (outer circle)
         pygame.draw.circle(surface, (0, 0, 0), (self.slider_pos, self.y), 7)
+        # Draw the inner circle of the slider knob
         pygame.draw.circle(surface, (160, 160, 160), (self.slider_pos, self.y), 4)
-    
 
+    
 class GUI:
+    """
+    Provides the visual representation of InteractionMatrix and the ability to alter the strength of force between particle types.
+    """
+
+    # Define colors in Christmas theme
     colors = {
             'simulation-background': (20, 20, 25),
             'panel-background': (25, 25, 35),
@@ -159,6 +229,15 @@ class GUI:
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict, padding: int = 60):
+        """
+        Initializes the GUI.
+        screen: Pygame screen to draw on.
+        screen_width: Width of the Pygame screen.
+        screen_height: Height of the Pygame screen.
+        interaction_matrix: InteractionMatrix object.
+        simulation_controlls: Dictionary of simulation controlls.
+        padding: Padding between panel elements and panel boundaries/borders.
+        """
         self.screen = screen
         self.screen_width, self.screen_height = screen_width, screen_height
         self.control_panel_width = screen_width - screen_height
@@ -188,17 +267,22 @@ class GUI:
         self.initiate_secondary_buttons(simulation_controlls)
 
     def draw_instruction(self):
-        pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
-        pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
+        """
+        Draws the instruction panel and the instructions on it onto the Pygame screen.
+        Defines the design and layout of the instruction panel, including the header, 
+        instruction text, and the color-specific word rendering.
+        """
+        pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)  # Draw instruction panel
+        pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)  # Draw instruction panel border
 
         font = pygame.font.Font(None, 18)
         header_font = pygame.font.Font(None, 23)
         header_font.set_bold(True)
         header_font.set_italic(True)
-        
+
         y_offset = self.instruction_rect.top + 10
 
-        header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]
+        header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]  # Define header parts
         segment_colors = [
             self.colors['christmas-white'],
             self.colors['christmas-red'],
@@ -209,18 +293,22 @@ class GUI:
 
         x_offset = self.instruction_rect.centerx - sum(header_font.size(word)[0] for word in header_parts) / 2
 
-        for idx, part in enumerate(header_parts):
-            shadow_surface = header_font.render(part, True, (0, 0, 0))
-            shadow_rect = shadow_surface.get_rect(topleft=(x_offset + 1, y_offset + 1))
-            self.screen.blit(shadow_surface, shadow_rect)
+        for idx, part in enumerate(header_parts):  # Iterate over each part in the header_parts list
+            # Render the shadow of the header part with a black color (offset by 1 pixel for the shadow effect)
+            shadow_surface = header_font.render(part, True, (0, 0, 0))  
+            shadow_rect = shadow_surface.get_rect(topleft=(x_offset + 1, y_offset + 1))  # Set the shadow's position slightly offset from the original part
+            self.screen.blit(shadow_surface, shadow_rect)  # Draw the shadow on the screen
 
-            part_surface = header_font.render(part, True, segment_colors[idx])
-            part_rect = part_surface.get_rect(topleft=(x_offset, y_offset))
-            self.screen.blit(part_surface, part_rect)
+            # Render the header part itself using its specific color from segment_colors
+            part_surface = header_font.render(part, True, segment_colors[idx])  
+            part_rect = part_surface.get_rect(topleft=(x_offset, y_offset))  # Set the position of the header part (without shadow offset)
+            self.screen.blit(part_surface, part_rect)  # Draw the header part on the screen
 
-            x_offset += part_surface.get_width()
+            # Update the x_offset to position the next header part correctly
+            x_offset += part_surface.get_width()  # Add the width of the current part to x_offset
 
-        y_offset += header_font.get_height()
+        # After all parts are drawn, update the y_offset to move down to the next line for any subsequent header
+        y_offset += header_font.get_height()  # Move y_offset down by the height of the header font
 
         color_words = {
             "Start": self.colors['christmas-green'],
@@ -245,40 +333,48 @@ class GUI:
 
         y_offset = self.instruction_rect.top + 30
 
-        x_offset = self.instruction_rect.left - 20
+        x_offset = self.instruction_rect.left - 20  # Move x_offset left by 20 pixels
 
-        for line in instruction_parts:
-            words = line.split(" ")
+        for line in instruction_parts:  # Iterate over each line in the instruction_parts list (each instruction line)
+            words = line.split(" ")  # Split the current line into individual words
+            # Calculate the centered x_offset by taking into account the total width of the words and centering them within the instruction rectangle
             centered_x_offset = x_offset + (self.instruction_rect.width - sum(font.size(word)[0] for word in words)) / 2
 
-            for word in words:
-                if word.strip("'") in color_words:
-                    color = color_words[word.strip("'")]
+            for word in words:  # Iterate over each word in the line
+                if word.strip("'") in color_words:  # Check if the word is listed in the color_words dictionary (removing any surrounding quotes)
+                    color = color_words[word.strip("'")]  # Retrieve the associated color from color_words and assign it to 'color'
                 else:
-                    color = self.colors['christmas-white']
+                    color = self.colors['christmas-white']  # If the word is not found in color_words, use the default color (christmas-white)
 
+                # Render the shadow of the word in black
                 shadow_surface = font.render(word, True, (0, 0, 0))
+                # Position the shadow slightly offset from the word's original position (1 pixel down and right)
                 shadow_rect = shadow_surface.get_rect(topleft=(centered_x_offset + 1, y_offset + 1))
-                self.screen.blit(shadow_surface, shadow_rect)
+                self.screen.blit(shadow_surface, shadow_rect)  # Draw the shadow on the screen
 
+                # Render the word itself with the appropriate color
                 word_surface = font.render(word, True, color)
+                # Set the position of the word to be centered horizontally and positioned at the current y_offset
                 word_rect = word_surface.get_rect(topleft=(centered_x_offset, y_offset))
-                self.screen.blit(word_surface, word_rect)
+                self.screen.blit(word_surface, word_rect)  # Draw the word on the screen
 
+                # Update the x_offset to position the next word after the current one, including space width between words
                 centered_x_offset += word_surface.get_width() + font.size(" ")[0]
 
             y_offset += font.get_height() + 5
             
-        # set the height so the text fits inside
+        # Set the height so the text fits inside
         self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
         self.instruction_rect.bottom = self.screen_height - 10
 
     def initiate_main_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
-        button_width = self.control_panel_width - 2*h_padding
+        button_width = self.control_panel_width - 2 * h_padding
         button_height = 50
         button_x = self.screen_width - self.control_panel_width + h_padding
         button_y = 50
+
+        # Add buttons to the list
 
         self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
@@ -389,6 +485,13 @@ class GUI:
         self.interactions_interface.handle_click(event)
                 
     def draw_control_panel(self, mouse_pos):
+        """
+        Renders all elements that make up the control panel section of the simulation interface:
+        1. The control panel background (a rectangular area on the side of the screen).
+        2. The interactive buttons that allow users to control the simulation (e.g. start, stop, reset).
+        3. The interactions interface that shows different simulation parameters and controls.
+        4. The instruction that provides guidance to the user on how to interact with the simulation.
+        """
         pygame.draw.rect(self.screen, self.colors['panel-background'],
                          pygame.Rect(self.screen_width-self.control_panel_width, 0,
                                      self.control_panel_width, self.screen_height))
@@ -405,12 +508,17 @@ class GUI:
             
         self.interactions_interface.draw(self.screen, mouse_pos)
 
-        self.draw_instruction()
+        self.draw_instruction()  # Draw the instruction
             
     def draw_particles(self, particles):
-        # reset canvas of simulation area
+        """
+        Renders the particles on the simulation area.
+        Clears the simulation area by drawing the background and then iterates over the provided list of particles.
+        For each particle, it retrieves the appropriate color based on its type and draws it onto the screen with its current properties.
+        """
+        # Reset canvas of simulation area
         pygame.draw.rect(self.screen, self.colors['simulation-background'], pygame.Rect(0, 0, self.screen_height + 1, self.screen_height + 1))
         
-        for p in particles:
-            color = self.particle_colors[p.type]
-            p.draw(self.screen, self.screen_height, self.screen_height, color)
+        for p in particles:  # Iterate over the particles
+            color = self.particle_colors[p.type]  # Retrieve the color based on the particle type
+            p.draw(self.screen, self.screen_height, self.screen_height, color)  # Draw the particle with the properties
