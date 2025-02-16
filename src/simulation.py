@@ -160,10 +160,11 @@ class Simulation:
     
     
     def set_force_scaling(self, force_scaling: float):
-        self.force_scaling = force_scaling
+        for particle in self.particles:
+            particle.force_scaling = force_scaling
         
     def get_force_scaling(self):
-        return self.force_scaling
+        return self.particles[-1].force_scaling
         
         
     def modify_particle_count(self, by: int):

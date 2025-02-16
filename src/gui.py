@@ -337,7 +337,7 @@ class GUI:
         # ----- random movement ----
         y = self.sliders[-1].rect.bottom + 20
         self.text_fields.append(Text("Random Movement", 18, center=(relative_x + section_width//4 - 7, y)))
-        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0, 0.01,
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0, 0.05,
                                    simulation_controls['set_random_movement'], simulation_controls['get_random_movement']))
         
         # ----- global repulsion -----
@@ -365,12 +365,12 @@ class GUI:
         
         # ----- particle count -----
         self.text_fields.append(Text("Particles: ", 24, (0, self.sliders[-2].rect.bottom + 25)))
-        self.text_fields[-1].rect.left = relative_x + 10
+        self.text_fields[-1].rect.left = relative_x + 8
         self.text_fields.append(Text("1000", 20, (self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.centery), get_value=simulation_controls['particle_count']))
         
-        self.buttons.append(Button((self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.top), (40, 30), "-100",
+        self.buttons.append(Button((self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.top), (40, 25), "-100",
                                    self.colors['normal-button'], simulation_controls['remove_particles'], font_size = 16))
-        self.buttons.append(Button((self.buttons[-1].rect.right + 10, self.buttons[-1].rect.top), (40, 30), "+100", 
+        self.buttons.append(Button((self.buttons[-1].rect.right + 10, self.buttons[-1].rect.top), (40, 25), "+100", 
                                    self.colors['normal-button'], simulation_controls['add_particles'], font_size = 16))
         
         center_y = self.text_fields[-1].rect.centery
