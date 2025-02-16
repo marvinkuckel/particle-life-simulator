@@ -280,11 +280,6 @@ class GUI:
         button_x = self.screen_width - self.control_panel_width + h_padding
         button_y = 50
 
-        # Add buttons to the panel with the correct colors
-        # self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", (50, 86, 50), self.start_simulation))
-        # self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", (211, 171, 130), self.stop_simulation))
-        # self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", (123, 169, 191), self.reset))
-        # self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", (0, 0, 102), self.exit))
         self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
         self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
