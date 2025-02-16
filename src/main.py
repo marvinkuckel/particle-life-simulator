@@ -67,7 +67,10 @@ class Main:
             'set_friction': self.simulation.set_friction,
             'get_friction': self.simulation.get_friction,
             'set_random_movement': self.simulation.set_random_movement,
-            'get_random_movement': self.simulation.get_random_movement
+            'get_random_movement': self.simulation.get_random_movement,
+            'particle_count': lambda: len(self.simulation.particles),
+            'add_particles': self.simulation.add_particles,
+            'remove_particles': self.simulation.remove_particles
         }
         
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)

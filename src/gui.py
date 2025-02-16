@@ -346,6 +346,20 @@ class GUI:
         pos = pos[0] + 30, pos[1] + 30
         self.buttons.append(Button(pos, (40, 40), "", self.colors['normal-button'], self.interaction_matrix.randomize_fields, image_path="../images/refresh.png"))
         
+        # ----- particle count -----
+        self.text_fields.append(Text("Particles: ", 24, (0, self.sliders[-2].rect.bottom + 25)))
+        self.text_fields[-1].rect.left = relative_x + 20
+        self.text_fields.append(Text("1000", 20, (self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.centery), get_value=simulation_controls['particle_count']))
+        
+        self.buttons.append(Button((self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.top), (40, 30), "-100",
+                                   self.colors['normal-button'], simulation_controls['remove_particles'], font_size = 16))
+        self.buttons.append(Button((self.buttons[-1].rect.right + 10, self.buttons[-1].rect.top), (40, 30), "+100", 
+                                   self.colors['normal-button'], simulation_controls['add_particles'], font_size = 16))
+        
+        center_y = self.text_fields[-1].rect.centery
+        self.buttons[-1].rect.centery = center_y
+        self.buttons[-2].rect.centery = center_y
+        
     def button_click(self, event):
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
