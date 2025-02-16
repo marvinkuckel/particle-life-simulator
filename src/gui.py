@@ -336,6 +336,8 @@ class GUI:
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
                 button.trigger(event)
+                if button.text.lower() == "reset":
+                    self.draw_particles([])
                 return
         
         for slider in self.sliders:
