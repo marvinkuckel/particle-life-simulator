@@ -1,6 +1,7 @@
-from typing import Callable, Tuple
-import pygame
+from typing import Tuple
 import time
+
+import pygame
 
 from interactions_interface import InteractionsInterface
 
@@ -39,7 +40,7 @@ class Text:
 
 
 class Button():
-    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None, font_size = 36):
+    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36):
         """
         params:
             pos: (x, y) coordinates of buttons top-left corner
@@ -96,30 +97,28 @@ class Button():
                 self.is_clicked = True
                 self.clicked_time = time.time()
                 self.size_factor = 0.95
-                
-                
+
+
 class Slider:
     def __init__(self, left_x, right_x, center_y, min_value, max_value, setter: callable, getter: callable):
-        self.x = left_x
-        self.y = center_y
-        self.width = right_x - left_x
+        self.x, self.y = left_x, center_y
         self.min_value, self.max_value = min_value, max_value
+        self.setter, self.getter = setter, getter
         
-        self.slider_pos = self.x + self.width * (getter() - min_value)
+        self.width = right_x - left_x
+        self.slider_pos = self.x + self.width * (getter() / max_value - min_value)
+        self.rect = pygame.Rect(self.x - 7, self.y - 7, self.width + 7, 14)
         
-        self.setter = setter
-        self.getter = getter
-        
-        self.rect = pygame.Rect(self.x, self.y - 5, self.x + self.width, self.y + 5)
-        print(self.rect)
-
     def update(self, x_position):
         self.slider_pos = x_position
-        self.setter((x_position - self.x) / self.width * (self.max_value - self.min_value))
+        value = (x_position - self.x) / self.width * (self.max_value - self.min_value)
+        self.setter(max(min(value, self.max_value), self.min_value))
 
     def draw(self, surface):
         pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x+self.width, self.y), 3)
-        pygame.draw.circle(surface, (0, 0, 0), (self.slider_pos, self.y), 5)
+        pygame.draw.circle(surface, (0, 0, 0), (self.slider_pos, self.y), 7)
+        pygame.draw.circle(surface, (160, 160, 160), (self.slider_pos, self.y), 4)
+    
 
 class GUI:
     colors = {
@@ -269,18 +268,18 @@ class GUI:
     def initiate_secondary_buttons(self, simulation_controls):
         """Buttons for managing parameters influencing the particle interactions
         Call this method after creating interactions_interface"""
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, 32)
         
         relative_x = self.screen_width - self.control_panel_width + self.padding
-        relative_y = self.buttons[-1].rect.bottom + self.padding
+        relative_y = self.buttons[-1].rect.bottom + 70
         
         section_width = self.screen_width - self.control_panel_width//2 - relative_x - 10
-        center_x = relative_x + section_width//2 + 10
+        center_x = relative_x + section_width//2
         
         # ------ simulation speed ------
         font_size = font.size("0.000")
         options = [-0.25, -0.1, -0.02, 0.02, 0.1, 0.25]
-        button_size = (section_width - font_size[0] - 20) // len(options)
+        button_size = (section_width - font_size[0] - 25) // len(options)
         
         for i, change_by in enumerate(options):
             func = lambda change=change_by: simulation_controls['set_sim_speed'](change)
@@ -293,14 +292,45 @@ class GUI:
                                        text, self.colors["normal-button"], func,
                                        font_size=button_size//2))
 
-        setting_name = Text("Simulation Speed", 30, (center_x, self.buttons[-1].rect.top - 20))
-        setting_value = Text("0.0000", 24, (center_x, self.buttons[-1].rect.center[1]), get_value=simulation_controls['get_sim_speed'], length=6)
+        setting_name = Text("Simulation Speed", 30, center=(center_x, self.buttons[-1].rect.top - 20))
+        setting_value = Text("0.0000", 24, (center_x + 5, self.buttons[-1].rect.center[1]), get_value=simulation_controls['get_sim_speed'], length=6)
         self.text_fields.extend((setting_name, setting_value))
         
-        # ----- force factor -----
-        self.sliders.append(Slider(relative_x, relative_x + section_width, self.buttons[-1].rect.center[1] + 40, 0.0001, 0.1,
+        relative_x += 14
+        
+        # ----- force scaling -----
+        y = self.buttons[-1].rect.bottom + 40
+        self.text_fields.append(Text("Force Scaling", 24, center=(relative_x + section_width//4 - 7, y)))
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.00000001, 0.01,
                                    simulation_controls['set_force_scaling'], simulation_controls['get_force_scaling']))
-
+        
+        # ----- friction -----
+        self.text_fields.append(Text("Friction", 24, center=(relative_x + section_width*3//4 - 7, y)))
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0, 1,
+                                   simulation_controls['set_friction'], simulation_controls['get_friction']))
+        
+        # ----- random movement ----
+        y = self.sliders[-1].rect.bottom + 40
+        self.text_fields.append(Text("Random Movement", 24, center=(relative_x + section_width//4 - 7, y)))
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.0001, 0.001,
+                                   simulation_controls['set_random_movement'], simulation_controls['get_random_movement']))
+        
+        # ----- global repulsion -----
+        self.text_fields.append(Text("Global Repulsion", 24, center=(relative_x + section_width*3//4 - 7, y)))
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0.00001, 0.001,
+                                   self.interaction_matrix.set_global_repulsion, self.interaction_matrix.get_global_repulsion))
+        
+        # ----- min radius -----
+        y = self.sliders[-1].rect.bottom + 40
+        self.text_fields.append(Text("Min Radius", 24, center=(relative_x + section_width//4 - 7, y)))
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 15, self.text_fields[-1].rect.bottom + 10, 0.0000000001, 0.01,
+                                   self.interaction_matrix.set_min_radius, self.interaction_matrix.get_min_radius))
+        
+        # ----- max radius -----
+        self.text_fields.append(Text("Max Radius", 24, center=(relative_x + section_width*3//4 - 7, y)))
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0.01, 0.2,
+                                   self.interaction_matrix.set_max_radius, self.interaction_matrix.get_max_radius))
+        
     def button_click(self, event):
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
@@ -309,7 +339,7 @@ class GUI:
         
         for slider in self.sliders:
             if slider.rect.collidepoint(event.pos):
-                print(event.pos)
+                print(event.pos, slider.rect, slider.rect.collidepoint(event.pos))
                 slider.update(event.pos[0])
                 return
         

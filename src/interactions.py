@@ -16,6 +16,25 @@ class InteractionMatrix:
         for i in range(num_types):
             for j in range(num_types):
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+    
+    def set_min_radius(self, min_radius: float):
+        self.min_radius = min_radius
+        
+    def get_min_radius(self):
+        return self.min_radius
+        
+    def set_max_radius(self, max_radius: float):
+        self.max_radius = max_radius
+        
+    def get_max_radius(self):
+        return self.max_radius
+        
+    def set_global_repulsion(self, global_repulsion: float):
+        self.global_repulsion = global_repulsion
+        
+    def get_global_repulsion(self):
+        return self.global_repulsion
+        
         
 @njit            
 def calculate_force(px1: float, py1: float, type1: int, 
