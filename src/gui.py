@@ -64,11 +64,22 @@ class Button():
         
         self.image = None
         if image_name:
-            cwd = os.getcwd()
-            path = os.path.join(cwd, "images", image_name)
-            self.image = pygame.image.load(path)
             size = self.rect.size[0] - 10, self.rect.size[1] - 10
-            self.image = pygame.transform.scale(self.image, size)
+            
+            cwd = os.getcwd()
+            path1 = os.path.join(cwd, "images", image_name)
+            path2 = os.path.join(cwd, "src", "images", image_name)
+            
+            try:
+                self.image = pygame.image.load(path1)
+                self.image = pygame.transform.scale(self.image, size)
+            except:
+                try:
+                    self.image = pygame.image.load(path2)
+                    self.image = pygame.transform.scale(self.image, size)
+                except:
+                    print("Image could not be loaded. Displaying text instead")
+                    
 
     def lighten_color(self, color, factor):
         return tuple(min(int(c * factor), 255) for c in color)
