@@ -50,6 +50,7 @@ class Main:
             simulation_parameters["time_factor"],
             simulation_parameters["force_scaling"],
             simulation_parameters["friction"],
+            simulation_parameters["random_movement"]
         )
 
         simulation_controlls = {

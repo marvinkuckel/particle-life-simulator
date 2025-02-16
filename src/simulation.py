@@ -102,7 +102,7 @@ class Simulation:
                                         self.interaction_matrix.max_radius,
                                         self.interaction_matrix.min_radius
                                     )
-                                    p1.apply_force(force_x, force_y, self.force_scaling)
+                                    p1.apply_force(force_x, force_y)
 
         self.enforce_boundaries()
         end_time = time.time()  # End time
