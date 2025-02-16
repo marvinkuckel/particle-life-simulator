@@ -5,38 +5,68 @@ import pygame
 from interactions_interface import InteractionsInterface
 
 class Text:
-    """Simple text that can be updated by a get function and drawn in draw_control_panel"""
-    def __init__(self, text, font_size, center, font_color = (255, 255, 255), get_value: callable = None, length = None):
-        self.text = text
-        self.length = length
-        self.get_value = get_value
+    """
+    A simple text display that can be updated dynamically using a getter function 
+    and drawn on a screen or surface.
+    """
+    
+    def __init__(self, text, font_size, center, font_color=(255, 255, 255), get_value: callable=None, length=None):
+        """
+        Initializes the Text object.
+        text (str): The initial static text to be displayed.
+        font_size (int): The size of the font to be used for rendering the text.
+        center (tuple): The (x, y) coordinates to center the text on the screen.
+        font_color (tuple): The color of the font (default is white).
+        get_value (callable): A function that provides a value to be displayed dynamically (optional).
+        length (int): The length to ensure the text is padded or truncated to (optional).
+        """
+        self.text = text  # The static text value
+        self.length = length  # The optional fixed length for the text
+        self.get_value = get_value  # The callable to get dynamic values (if provided)
         
-        self.font = pygame.font.Font(None, font_size)
-        self.font_color = font_color
+        self.font = pygame.font.Font(None, font_size)  # Load the font with the given size
+        self.font_color = font_color  # Set the color of the font
         
+        # Render the initial text
         self.rendered_text = self.font.render(text, True, font_color)
+        # Get the rectangle for positioning the text on the screen
         self.rect = self.rendered_text.get_rect(center=center)
     
     def draw(self, screen):
+        """
+        Draws the rendered text onto the provided screen.
+
+        Parameters:
+        screen (pygame.Surface): The screen or surface where the text will be drawn.
+        """
         screen.blit(self.rendered_text, self.rect)
         
     def set_text(self, text):
+        """
+        Updates the text that is displayed, and re-renders it with the current font color.
+        text (str): The new text to display.
+        """
         self.rendered_text = self.font.render(text, True, self.font_color)
+        # Optionally, you can update the text rectangle if its position needs to be adjusted.
         #self.rect = self.rendered_text.get_rect(center=self.rect.center)
         
     def update(self):
+        """
+        Updates the text to display the latest value if a getter function is provided.
+        The displayed value is rounded to 4 decimal places. It can also ensure the text 
+        length is fixed if the 'length' attribute is set.
+        """
         if self.get_value:
-            text = str(round(self.get_value(), 4))
+            text = str(round(self.get_value(), 4))  # Get the value from the getter and round it
             
-            # keep text the same length
+            # If a length is specified, adjust the text length by adding zeros or truncating
             if self.length:
                 while len(text) < self.length:
-                    text = text + "0"
+                    text = text + "0"  # Pad with zeros if the length is shorter
                 if len(text) > self.length:
-                    text = text[:self.length]
+                    text = text[:self.length]  # Truncate if the length exceeds
                 
-            self.set_text(text)
-
+            self.set_text(text)  # Update the text to the new value
 
 class Button():
     def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36, image_name = None):
@@ -135,25 +165,50 @@ class Button():
 
 class Slider:
     def __init__(self, left_x, right_x, center_y, min_value, max_value, setter: callable, getter: callable):
-        self.x, self.y = left_x, center_y
-        self.min_value, self.max_value = min_value, max_value
-        self.setter, self.getter = setter, getter
-        
-        self.width = right_x - left_x
+        """
+        Initializes the Slider object.
+        left_x (int): The x-coordinate of the left side of the slider.
+        right_x (int): The x-coordinate of the right side of the slider.
+        center_y (int): The y-coordinate of the center of the slider.
+        min_value (int or float): The minimum value the slider can represent.
+        max_value (int or float): The maximum value the slider can represent.
+        setter (callable): A function that sets the value of the slider.
+        getter (callable): A function that gets the current value of the slider.
+        """
+        self.x, self.y = left_x, center_y  # Position of the slider
+        self.min_value, self.max_value = min_value, max_value  # Min and max values of the slider
+        self.setter, self.getter = setter, getter  # Setter and getter functions
+
+        self.width = right_x - left_x  # Calculate the width of the slider
+        # Calculate the initial position of the slider based on the current value
         self.slider_pos = self.x + self.width * (getter() / max_value - min_value)
-        self.rect = pygame.Rect(self.x - 7, self.y - 7, self.width + 14, 14)
+        self.rect = pygame.Rect(self.x - 7, self.y - 7, self.width + 14, 14)  # The rectangle for the slider's hitbox
         
     def update(self, x_position):
+        """
+        Updates the position of the slider and its value based on the new x position.
+        x_position (int): The new x position of the slider's knob.
+        """
+        # Restrict the slider's position within the valid range
         self.slider_pos = min(max(x_position, self.x), self.x + self.width)
+        # Calculate the new value for the slider based on its position
         value = (x_position - self.x) / self.width * (self.max_value - self.min_value)
+        # Set the value of the slider within the min and max range
         self.setter(max(min(value, self.max_value), self.min_value))
 
     def draw(self, surface):
-        pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x+self.width, self.y), 3)
+        """
+        Draws the slider on the given surface.
+        surface (pygame.Surface): The surface where the slider will be drawn.
+        """
+        # Draw the slider track (line)
+        pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x + self.width, self.y), 3)
+        # Draw the slider knob (outer circle)
         pygame.draw.circle(surface, (0, 0, 0), (self.slider_pos, self.y), 7)
+        # Draw the inner circle of the slider knob
         pygame.draw.circle(surface, (160, 160, 160), (self.slider_pos, self.y), 4)
-    
 
+    
 class GUI:
     """
     Provides the visual representation of InteractionMatrix and the ability to alter the strength of force between particle types.
@@ -276,7 +331,6 @@ class GUI:
             "Increase repulsion - right mouse button / scroll downwards"
         ]
 
-
         y_offset = self.instruction_rect.top + 30
 
         x_offset = self.instruction_rect.left - 20  # Move x_offset left by 20 pixels
@@ -314,7 +368,6 @@ class GUI:
         self.instruction_rect.bottom = self.screen_height - 10
 
     def initiate_main_buttons(self, simulation_controlls, h_padding = 60):
-
         # setup parameters for button initiation
         button_width = self.control_panel_width - 2 * h_padding
         button_height = 50
