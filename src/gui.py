@@ -155,7 +155,12 @@ class GUI:
             'christmas-white': (255, 255, 255),
             'christmas-gold': (204, 153, 1),
             'christmas-grey': (80, 90, 120),
-            'christmas-blue': (0, 30, 250)
+            'christmas-blue': (0, 30, 250),
+            'easter-yellow': (246, 255, 181),
+            'easter-green': (167, 230, 192),
+            'easter-pink': (255, 171, 171),
+            'easter-red': (255, 103, 125),
+            'easter-lilac': (200, 181, 228)
         }
     
     def __init__(self, screen, screen_width, screen_height, interaction_matrix, simulation_controlls: dict, padding: int = 60):
@@ -280,10 +285,10 @@ class GUI:
         button_x = self.screen_width - self.control_panel_width + h_padding
         button_y = 50
 
-        self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['christmas-green'], simulation_controlls['start']))
-        self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['christmas-gold'], simulation_controlls['stop']))
-        self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
-        self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
+        self.buttons.append(Button((button_x, button_y), (button_width, button_height), "Start", self.colors['easter-green'], simulation_controlls['start']))
+        self.buttons.append(Button((button_x, button_y + 60), (button_width, button_height), "Stop", self.colors['easter-yellow'], simulation_controlls['stop']))
+        self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['easter-red'], simulation_controlls['reset']))
+        self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['easter-lilac'], simulation_controlls['exit']))
 
     def initiate_secondary_buttons(self, simulation_controls):
         """Buttons for managing parameters influencing the particle interactions
