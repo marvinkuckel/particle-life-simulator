@@ -140,7 +140,7 @@ class GUI:
         self.control_panel_width = screen_width - screen_height
         self.padding = padding  # distance between panel elementens and panel boundaries/borders
         
-        self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
+        self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white','christmas-blue']]
         self.interaction_matrix = interaction_matrix
         
         self.text_fields = []

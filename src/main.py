@@ -13,7 +13,7 @@ from simulation import Simulation
 # centralizes adjustment of all relevant parameters
 simulation_parameters = {
     "n_particles": 2000,        # number of particles 
-    "n_types": 4,               # number of particle types
+    "n_types": 5,               # number of particle types
     "time_factor": 0.1,         # controls simulation speed
     "force_scaling": 0.2,       # scales force acting on particles velocity
     "min_radius": 0.01,         # distance at which interaction starts and its force is strongest
