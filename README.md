@@ -94,18 +94,29 @@ Positions of graphical elements in `gui.py` can be adjusted for different screen
 
 ## Testing  
 
-#### 1. `interactions_interface.py` Tests:
-- **Test 1:** Verify if a mouse click updates the interaction matrix.
-- **Test 2:** Check if the matrix values reflect expected interactions after changes.
+#### 1. `interaction.py` Tests:  
+- **Test 1:** Verify the interaction matrix is 3x3.  
+- **Test 2:** Ensure forces between two particles return correct values.  
 
-#### 2. `simulation.py` Tests:
-- **Test 1:** Ensure the number of particles and simulation grid size are correct.
-- **Test 2:** Verify particles stay within valid boundaries.
-- **Test 3:** Confirm particle positions change with each timestep.
+#### 2. `interaction_matrix.py` Tests:  
+- **Test 1:** Verify `calculate_force` returns zero when no interaction exists.  
+- **Test 2:** Ensure `calculate_force` produces nonzero force for interacting particles.  
 
-#### 3. `interactions.py` Tests:
-- **Test 1:** Verify the interaction matrix is 3x3.
-- **Test 2:** Ensure forces between two particles return correct values.
+#### 3. `interactions_interface.py` Tests:  
+- **Test 1:** Verify if a mouse click updates the interaction matrix.  
+- **Test 2:** Check if the matrix values reflect expected interactions after changes.  
+
+#### 4. `particle.py` Tests:  
+- **Test 1:** Verify correct initialization of particle attributes.  
+- **Test 2:** Ensure `apply_force` modifies velocity correctly.  
+- **Test 3:** Confirm `update_position` changes position and applies friction.  
+- **Test 4:** Check random movement affects position.  
+- **Test 5:** Ensure `draw` function executes without errors.  
+
+#### 5. `simulation.py` Tests:  
+- **Test 1:** Ensure the number of particles and simulation grid size are correct.  
+- **Test 2:** Verify particles stay within valid boundaries.  
+- **Test 3:** Confirm particle positions change with each timestep.  
 
 ## License  
 The repository is private; no license has been determined yet.  
