@@ -358,12 +358,14 @@ class GUI:
         
         # ----- randomize matrix fields -----
         pos = self.interactions_interface.relative_position
-        pos = pos[0] + 30, pos[1] + 30
-        self.buttons.append(Button(pos, (40, 40), "", self.colors['normal-button'], self.interaction_matrix.randomize_fields, image_name="refresh.png"))
+        first_field_rect = self.interactions_interface.fields[0, 0]
+        
+        self.buttons.append(Button((0, 0), (30, 30), "", self.colors['normal-button'], self.interaction_matrix.randomize_fields, image_name="refresh.png"))
+        self.buttons[-1].rect.bottomright = first_field_rect.topleft
         
         # ----- particle count -----
         self.text_fields.append(Text("Particles: ", 24, (0, self.sliders[-2].rect.bottom + 25)))
-        self.text_fields[-1].rect.left = relative_x + 20
+        self.text_fields[-1].rect.left = relative_x + 10
         self.text_fields.append(Text("1000", 20, (self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.centery), get_value=simulation_controls['particle_count']))
         
         self.buttons.append(Button((self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.top), (40, 30), "-100",
