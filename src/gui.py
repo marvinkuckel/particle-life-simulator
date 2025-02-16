@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 import time
 
@@ -40,7 +41,7 @@ class Text:
 
 
 class Button():
-    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36):
+    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36, image_name = None):
         """
         params:
             pos: (x, y) coordinates of buttons top-left corner
@@ -60,6 +61,25 @@ class Button():
         self.is_clicked = False
         self.clicked_time = 0
         self.size_factor = 1
+        
+        self.image = None
+        if image_name:
+            size = self.rect.size[0] - 10, self.rect.size[1] - 10
+            
+            cwd = os.getcwd()
+            path1 = os.path.join(cwd, "images", image_name)
+            path2 = os.path.join(cwd, "src", "images", image_name)
+            
+            try:
+                self.image = pygame.image.load(path1)
+                self.image = pygame.transform.scale(self.image, size)
+            except:
+                try:
+                    self.image = pygame.image.load(path2)
+                    self.image = pygame.transform.scale(self.image, size)
+                except:
+                    print("Image could not be loaded. Displaying text instead")
+                    
 
     def lighten_color(self, color, factor):
         return tuple(min(int(c * factor), 255) for c in color)
@@ -85,9 +105,13 @@ class Button():
         pygame.draw.rect(screen, current_color, rect)
         pygame.draw.rect(screen, (0, 0, 0), rect, 3)
 
-        text_surface = self.font.render(self.text, True, (255, 255, 255))
-        text_rect = text_surface.get_rect(center=rect.center)
-        screen.blit(text_surface, text_rect)
+        if self.image:
+            pos = self.rect.topleft
+            screen.blit(self.image, (pos[0] + 5, pos[1] + 5))
+        else:
+            text_surface = self.font.render(self.text, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(center=rect.center)
+            screen.blit(text_surface, text_rect)
 
     def trigger(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:  # mouse-click?
@@ -331,6 +355,27 @@ class GUI:
         self.text_fields.append(Text("Max Radius", 20, center=(relative_x + section_width*3//4 - 7, y)))
         self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 20, self.text_fields[-1].rect.bottom + 10, 0.05, 0.3,
                                    self.interaction_matrix.set_max_radius, self.interaction_matrix.get_max_radius))
+        
+        # ----- randomize matrix fields -----
+        pos = self.interactions_interface.relative_position
+        first_field_rect = self.interactions_interface.fields[0, 0]
+        
+        self.buttons.append(Button((0, 0), (30, 30), "", self.colors['normal-button'], self.interaction_matrix.randomize_fields, image_name="refresh.png"))
+        self.buttons[-1].rect.bottomright = first_field_rect.topleft
+        
+        # ----- particle count -----
+        self.text_fields.append(Text("Particles: ", 24, (0, self.sliders[-2].rect.bottom + 25)))
+        self.text_fields[-1].rect.left = relative_x + 10
+        self.text_fields.append(Text("1000", 20, (self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.centery), get_value=simulation_controls['particle_count']))
+        
+        self.buttons.append(Button((self.text_fields[-1].rect.right + 20, self.text_fields[-1].rect.top), (40, 30), "-100",
+                                   self.colors['normal-button'], simulation_controls['remove_particles'], font_size = 16))
+        self.buttons.append(Button((self.buttons[-1].rect.right + 10, self.buttons[-1].rect.top), (40, 30), "+100", 
+                                   self.colors['normal-button'], simulation_controls['add_particles'], font_size = 16))
+        
+        center_y = self.text_fields[-1].rect.centery
+        self.buttons[-1].rect.centery = center_y
+        self.buttons[-2].rect.centery = center_y
         
     def button_click(self, event):
         for button in self.buttons:

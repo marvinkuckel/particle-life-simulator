@@ -17,6 +17,11 @@ class InteractionMatrix:
             for j in range(num_types):
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
     
+    def randomize_fields(self):
+        for i in range(self.number_of_types):
+            for j in range(self.number_of_types):
+                self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+    
     def set_min_radius(self, min_radius: float):
         self.min_radius = min_radius
         

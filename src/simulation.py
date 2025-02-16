@@ -139,6 +139,19 @@ class Simulation:
         self.particles = np.array([], dtype=object)
     
     
+    def add_particles(self, amount = 100):
+        self.num_particles = amount
+        
+        new_particles = self.generate_particles()
+        self.particles = np.concatenate((self.particles, new_particles))
+        
+        self.num_particles = len(self.particles)
+    
+    def remove_particles(self, amount = 100):
+        self.particles = self.particles[:self.num_particles - amount]
+        self.num_particles = len(self.particles) if len(self.particles) > 0 else 0
+    
+    
     def adjust_time_factor(self, by_percent: float):
         self.time_factor += self.time_factor * by_percent
         
