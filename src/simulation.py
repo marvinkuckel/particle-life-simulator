@@ -1,35 +1,47 @@
 import random
-from particle import Particle
-from interactions import InteractionMatrix, calculate_force
+import time
 import numpy as np
 
+from particle import Particle
+from interactions import InteractionMatrix, calculate_force
+
+
 class Simulation:
-    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles=1000, num_types=4, time_factor=0.1, grid_size=10):
-        self.width, self.height = width, height
-        # dynamically partitions simulation area into grid adjusted for screens aspect ratio
-        # cells count & size scales with particle number (more particles = more & smaller cells)
-        self.grid_size = int((num_particles ** 0.5) * (width / height) ** 0.5)
-        self.cells = {(x, y): np.empty(0, dtype=object) for x in range(self.grid_size) for y in range(self.grid_size)}
+    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles: int, num_types: int, time_factor: float, force_scaling: float, friction: float):
+            self.width, self.height = width, height
 
-        self.num_particles = num_particles
-        self.num_types = num_types
-        self.time_factor = time_factor
-        
-        self.interaction_matrix = interaction_matrix
-        self.particles = self.generate_particles()
+            # dynamically partitions simulation area into grid adjusted for screens aspect ratio
+            # cells count & size scales with particle number (more particles = more & smaller cells)
+            self.grid_size = int((num_particles ** 0.5) * (width / height) ** 0.5)
+            self.cells = {(x, y): [] for x in range(self.grid_size) for y in range(self.grid_size)}
+            
+            self.interaction_matrix = interaction_matrix
+            self.num_particles = num_particles
+            self.num_types = num_types
+            self.time_factor = time_factor
 
-        self.paused = True
+            # stores these values so particle can access the parameters set in main.py
+            self.friction = friction  
+            self.force_scaling = force_scaling 
+
+            self.particles = self.generate_particles()
+
+            self.paused = True
 
 
     def generate_particles(self):
         particles = np.empty(0, dtype=object)
 
+        # generates number of particles specified in main.py
         for i in range(self.num_particles):
-            # generates the number of particles specified, with the parameters set here
-            particle = Particle(position=(random.random(), random.random()),
-                                velocity=(1 - random.random() * 2, 1 - random.random() * 2),
-                                type=i % self.num_types,
-                                size=1, friction=0.5, random_movement=0.01)
+            particle = Particle(
+                position=(random.random(), random.random()),
+                velocity=(1 - random.random() * 2, 1 - random.random() * 2),
+                type=i % self.num_types,
+                size=1,  
+                friction=self.friction,
+                force_scaling=self.force_scaling
+            )
 
             particles = np.concatenate((particles, np.array([particle])))
             # place particle in grid cell corresponding to initial position
@@ -55,7 +67,10 @@ class Simulation:
         else:
             self.cells[(grid_x, grid_y)] = np.concatenate((self.cells[(grid_x, grid_y)], np.array([particle])))
 
+
     def update(self, dt):
+        start_time = time.time()
+
         # clears grid for updating particle positions in one step
         self.cells = {key: [] for key in self.cells}
 
@@ -86,7 +101,9 @@ class Simulation:
                                     p1.apply_force(force_x, force_y)
 
         self.enforce_boundaries()
-        
+        end_time = time.time()  # End time
+        print(f"Update duration: {end_time - start_time:.4f} seconds")  # Print duration
+
 
     def enforce_boundaries(self):
         # enforces boundaries if particles are out of bounds on either axis

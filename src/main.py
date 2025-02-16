@@ -8,9 +8,24 @@ import time
 from gui import GUI
 from interactions import InteractionMatrix
 from simulation import Simulation
+
+
+# centralizes adjustment of all relevant parameters
+simulation_parameters = {
+    "n_particles": 2000,        # number of particles 
+    "n_types": 4,               # number of particle types
+    "time_factor": 0.1,         # controls simulation speed
+    "force_scaling": 0.2,       # scales force acting on particles velocity
+    "min_radius": 0.01,         # distance at which interaction starts and its force is strongest
+    "max_radius": 0.15,         # distance at which interactions force is weakest and after which it stops
+    "global_repulsion": 0.004,  # repulsive force acting on all particles
+    "friction": 0.5,            # slows particles down over time
+}
+
+
 class Main:
     
-    def __init__(self, n_particles: int = 1000, n_types: int = 4):
+    def __init__(self):
         pygame.init()
         self.clock = pygame.time.Clock()
         
@@ -19,9 +34,23 @@ class Main:
         self.height = pygame.display.Info().current_h
         self.screen = pygame.display.set_mode((self.width, self.height), pygame.SCALED)
 
-        self.interaction_matrix = InteractionMatrix(n_types, min_radius=0.01, max_radius=0.15, global_repulsion=0.006)
-        self.simulation = Simulation(self.width, self.height, self.interaction_matrix, n_particles)
-        
+        self.interaction_matrix = InteractionMatrix(
+            simulation_parameters["n_types"],
+            simulation_parameters["min_radius"],
+            simulation_parameters["max_radius"],
+            simulation_parameters["global_repulsion"]
+        )
+
+        self.simulation = Simulation(
+            self.width, self.height,
+            self.interaction_matrix,
+            simulation_parameters["n_particles"],
+            simulation_parameters["n_types"],
+            simulation_parameters["time_factor"],
+            simulation_parameters["force_scaling"],
+            simulation_parameters["friction"],
+        )
+
         simulation_controlls = {
             'start': self.simulation.start_simulation,
             'stop': self.simulation.stop_simulation,
@@ -61,5 +90,5 @@ class Main:
             pygame.display.flip()
 
 if __name__ == "__main__":
-    app = Main(n_particles=1000)
+    app = Main()
     app.run(fps=30)
