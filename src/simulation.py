@@ -1,35 +1,31 @@
-from interactions import InteractionMatrix, calculate_force
-from particle import Particle
-import numpy as np
 import random
+import time
+import numpy as np
+from particle import Particle
+from interactions import InteractionMatrix, calculate_force
 
 class Simulation:
-    """
-    Handles the particle simulation, including particle generation, interaction logic and grid management.
-    """
-    def __init__(self, width,
-                 height,
-                 interaction_matrix: InteractionMatrix,
+    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles: int, num_types: int, time_factor: float, force_scaling: float, friction: float, random_movement: float):
+            self.width, self.height = width, height
 
-                 num_particles=1000,  # <== Choose the amount of particles!
-                 num_types=4,         # <== Choose the amount of particle types!
-                 time_factor=0.1,     # <== Choose the speed of the simulation!
-                 grid_size=10):       # <== Choose the size of the grid!
-        
-        self.width, self.height = width, height
-        # Dynamically partitions simulation area into grid adjusted for screens aspect ratio
-        # Cells count & size scales with particle number (more particles = more & smaller cells)
-        self.grid_size = int((num_particles ** 0.5) * (width / height) ** 0.5)
-        self.cells = {(x, y): np.empty(0, dtype=object) for x in range(self.grid_size) for y in range(self.grid_size)}
+            # dynamically partitions simulation area into grid adjusted for screens aspect ratio
+            # cells count & size scales with particle number (more particles = more & smaller cells)
+            self.grid_size = int((num_particles ** 0.5) * (width / height) ** 0.5)
+            self.cells = {(x, y): [] for x in range(self.grid_size) for y in range(self.grid_size)}
+            
+            self.interaction_matrix = interaction_matrix
+            self.num_particles = num_particles
+            self.num_types = num_types
+            self.time_factor = time_factor
 
-        self.num_particles = num_particles
-        self.num_types = num_types
-        self.time_factor = time_factor
-        
-        self.interaction_matrix = interaction_matrix
-        self.particles = self.generate_particles()  # initialize particles
+            # stores these values so particle can access the parameters set in main.py
+            self.friction = friction  
+            self.force_scaling = force_scaling 
+            self.random_movement = random_movement
 
-        self.paused = True
+            self.particles = self.generate_particles()
+
+            self.paused = True
 
     def generate_particles(self):
         """
@@ -37,12 +33,18 @@ class Simulation:
         """
         particles = np.empty(0, dtype=object)  # initialize particle array
 
+        # generates number of particles specified in main.py
         for i in range(self.num_particles):
-            # Generates the number of particles specified, with the parameters set here
-            particle = Particle(position=(random.random(), random.random()),  # Random initial position
-                                velocity=(1 - random.random() * 2, 1 - random.random() * 2),  # Random initial velocity
-                                type=i % self.num_types,  # Random particle type
-                                size=1, friction=0.5, random_movement=0.01)  # Default particle properties
+
+            particle = Particle(
+                position=(random.random(), random.random()),
+                velocity=(1 - random.random() * 2, 1 - random.random() * 2),
+                type=i % self.num_types,
+                size=1,  
+                friction=self.friction,
+                force_scaling=self.force_scaling,
+                random_movement=self.random_movement
+            )
 
             particles = np.concatenate((particles, np.array([particle])))
             # Place particle in grid cell corresponding to initial position
@@ -71,11 +73,13 @@ class Simulation:
         else:  # If the cell is not empty ...
             self.cells[(grid_x, grid_y)] = np.concatenate((self.cells[(grid_x, grid_y)], np.array([particle])))  # ... add the particle
 
+
     def update(self, dt):
-        """
-        Clears grid for updating particle positions in one step.
-        Updates particle position and adds it to appropriate cell
-        """
+
+        start_time = time.time()
+
+        # clears grid for updating particle positions in one step
+
         self.cells = {key: [] for key in self.cells}
 
         for p in self.particles:  # Iterate over the particles
@@ -109,6 +113,9 @@ class Simulation:
 
         self.enforce_boundaries()
 
+        end_time = time.time()  # End time
+        print(f"Update duration: {end_time - start_time:.4f} seconds")  # Print duration
+
     def enforce_boundaries(self):
         """
         Ensures that particles stay within the defined boundaries of the simulation area (between 0 and 1).
@@ -132,14 +139,72 @@ class Simulation:
         if len(self.particles) == 0:  # If there are no particles ...
             self.particles = self.generate_particles()  # ... generate particles
 
-    def stop_simulation(self):
+    def stop_simulation(self):https://github.com/marvinkuckel/particle-life-simulator/pull/85/conflict?name=src%252Fsimulation.py&ancestor_oid=cd722cfe629ead6b3b88e18d0b4ae9af3d1b0f14&base_oid=7a259b51d4e40a22e9c50908d58372e693e3ec3c&head_oid=c58b458f50ee15159577fc66c742b4415fa1cc7c
         """
         Pauses the simulation.
         """
         self.paused = True              
 
     def reset_simulation(self):
-        """
-        Resets the simulation by removing all particles.
-        """
-        self.particles = np.array([], dtype=object)  # Empty particle array
+
+        # removes all particles
+        self.particles = np.array([], dtype=object)
+    
+    
+    def add_particles(self, amount = 100):
+        self.num_particles = amount
+        
+        new_particles = self.generate_particles()
+        self.particles = np.concatenate((self.particles, new_particles))
+        
+        self.num_particles = len(self.particles)
+    
+    def remove_particles(self, amount = 100):
+        self.particles = self.particles[:self.num_particles - amount]
+        self.num_particles = len(self.particles) if len(self.particles) > 0 else 0
+    
+    
+    def adjust_time_factor(self, by_percent: float):
+        self.time_factor += self.time_factor * by_percent
+        
+    def get_time_factor(self):
+        return self.time_factor
+    
+    
+    def set_force_scaling(self, force_scaling: float):
+        for particle in self.particles:
+            particle.force_scaling = force_scaling
+        
+    def get_force_scaling(self):
+        return self.particles[-1].force_scaling
+        
+        
+    def modify_particle_count(self, by: int):
+        if by > 0:
+            self.num_types = by
+            self.particles.extend(self.generate_particles())
+            self.num_types = len(self.particles)
+        else:
+            self.particles = self.particles[:len(self.particles) - abs(by)]
+            
+    def get_particle_count(self):
+        return len(self.particles)
+            
+    
+    def set_friction(self, friction: float):
+        """friction: number between 0 and 1"""
+        for particle in self.particles:
+            particle.friction = friction
+            
+    def get_friction(self):
+        return self.particles[0].friction
+    
+    
+    def set_random_movement(self, random_movement: float):
+        """random_movement: should be close to 0 or be 0"""
+        for particle in self.particles:
+            particle.random_movement = random_movement
+
+    def get_random_movement(self):
+        return self.particles[0].random_movement
+

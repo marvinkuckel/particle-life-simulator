@@ -8,58 +8,84 @@ from gui import GUI
 from interactions import InteractionMatrix
 from simulation import Simulation
 
+# centralizes adjustment of all relevant parameters
+simulation_parameters = {
+    "n_particles": 2000,        # number of particles 
+    "n_types": 5,               # number of particle types
+    "time_factor": 0.1,         # controls simulation speed
+    "force_scaling": 0.2,       # scales force acting on particles velocity
+    "min_radius": 0.01,         # distance at which interaction starts and its force is strongest
+    "max_radius": 0.15,         # distance at which interactions force is weakest and after which it stops
+    "global_repulsion": 0.004,  # repulsive force acting on all particles
+    "friction": 0.5,            # slows particles down over time
+    "random_movement": 0        # adds random movement to particles position
+}
+
+
 class Main:
     
-    def __init__(self, n_particles: int = 1000, n_types: int = 4):
-    
-        # Initialise the Pygame library for graphical operations
+    def __init__(self):
+
         pygame.init()
         
         # Set up the clock to control the frame rate of the simulation
         self.clock = pygame.time.Clock()
         
-        # Adjust the window size to match the current screen resolution
-        self.width = pygame.display.Info().current_w  # Get the current screen width
-        self.height = pygame.display.Info().current_h  # Get the current screen height
-        self.screen = pygame.display.set_mode((self.width, self.height), pygame.SCALED)  # Set the screen mode to the current resolution with scaling
-        
-        # Initialise the InteractionMatrix with specified parameters
-        # The minimum and maximum radii and global repulsion define the interactions between particles
-        self.interaction_matrix = InteractionMatrix(n_types, min_radius=0.01, max_radius=0.15, global_repulsion=0.006)
-        
-        # Create an instance of the Simulation class, passing in the screen dimensions and interaction matrix
-        self.simulation = Simulation(self.width, self.height, self.interaction_matrix, n_particles)
-        
+        # adjusts the window size to fit the current screen resolution
+        self.width = pygame.display.Info().current_w
+        self.height = pygame.display.Info().current_h
+        self.screen = pygame.display.set_mode((self.width, self.height), pygame.SCALED)
+
+        self.interaction_matrix = InteractionMatrix(
+            simulation_parameters["n_types"],
+            simulation_parameters["min_radius"],
+            simulation_parameters["max_radius"],
+            simulation_parameters["global_repulsion"]
+        )
+
+        self.simulation = Simulation(
+            self.width, self.height,
+            self.interaction_matrix,
+            simulation_parameters["n_particles"],
+            simulation_parameters["n_types"],
+            simulation_parameters["time_factor"],
+            simulation_parameters["force_scaling"],
+            simulation_parameters["friction"],
+            simulation_parameters["random_movement"]
+        )
+
         simulation_controlls = {
-            'start': self.simulation.start_simulation,  # Start the simulation
-            'stop': self.simulation.stop_simulation,    # Stop the simulation
-            'reset': self.simulation.reset_simulation,  # Reset the simulation
-            'exit': lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),  # Trigger the quit event to exit the application
+            'start': self.simulation.start_simulation,
+            'stop': self.simulation.stop_simulation,
+            'reset': self.simulation.reset_simulation,
+            'exit': lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),
+            'set_sim_speed': self.simulation.adjust_time_factor,
+            'get_sim_speed': self.simulation.get_time_factor,
+            'set_force_scaling': self.simulation.set_force_scaling,
+            'get_force_scaling': self.simulation.get_force_scaling,
+            'set_particle_count': self.simulation.modify_particle_count,
+            'get_particle_count': self.simulation.get_particle_count,
+            'set_friction': self.simulation.set_friction,
+            'get_friction': self.simulation.get_friction,
+            'set_random_movement': self.simulation.set_random_movement,
+            'get_random_movement': self.simulation.get_random_movement,
+            'particle_count': lambda: len(self.simulation.particles),
+            'add_particles': self.simulation.add_particles,
+            'remove_particles': self.simulation.remove_particles
         }
         
         # Create the GUI, passing in the necessary details such as screen dimensions, the interaction matrix, and the simulation controls
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)
 
     def handle_events(self):
-        """
-        Handles the events within the Pygame event queue. 
-        Specifically listens for quit events (e.g. closing the window) 
-        and mouse button presses (for GUI interactions).
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                pygame.quit()
+                sys.exit()
 
-        1. Checks if the user has requested to quit the application.
-        2. Processes mouse button clicks by triggering appropriate button actions.
-        """
-        mouse_pos = pygame.mouse.get_pos()  # Get the current mouse position
-        
-        for event in pygame.event.get():  # Iterate over the events in the event queue
-            if event.type == pygame.QUIT:  # If the user has requested to quit ...
-                self.running = False  # ... set the running flag to False and ...
-                pygame.quit()  # ... quit the Pygame library and ...
-                sys.exit()  # ... and exit the program
-
-            elif event.type == pygame.MOUSEBUTTONDOWN:  # If the mouse button is pressed ...
-                self.gui.button_click(event)  # ... check if the mouse is over a button and trigger the corresponding action ...
-                self.gui.draw_control_panel(mouse_pos)  # ... and draw the control panel with the current mouse position
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.gui.button_click(event)
 
     def run(self, fps: int):  # Define the main game loop
         """
@@ -83,6 +109,6 @@ class Main:
 
             pygame.display.flip()  # Updates the entire screen to show the latest drawing changes (Refresh)
 
-if __name__ == "__main__":  # If the script is run as the main module
-    app = Main(n_particles=1000)  # Create an instance of the Main class
-    app.run(fps=30)  # Run the main game loop with a frame rate of 30
+if __name__ == "__main__":
+    app = Main()
+    app.run(fps=30)

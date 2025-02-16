@@ -21,18 +21,40 @@ class InteractionMatrix:
         self.interactions = np.zeros((num_types, num_types), dtype=np.float64)  # Initialize matrix with zeros
         for i in range(num_types):
             for j in range(num_types):
-                self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))  # Random values between -1 and 1
 
-@njit  # Numba decorator to enable JIT compilation
+                self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+    
+    def randomize_fields(self):
+        for i in range(self.number_of_types):
+            for j in range(self.number_of_types):
+                self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
+    
+    def set_min_radius(self, min_radius: float):
+        self.min_radius = min_radius
+        
+    def get_min_radius(self):
+        return self.min_radius
+        
+    def set_max_radius(self, max_radius: float):
+        self.max_radius = max_radius
+        
+    def get_max_radius(self):
+        return self.max_radius
+        
+    def set_global_repulsion(self, global_repulsion: float):
+        self.global_repulsion = global_repulsion
+        
+    def get_global_repulsion(self):
+        return self.global_repulsion
+        
+        
+@njit            
 def calculate_force(px1: float, py1: float, type1: int, 
-                    px2: float, py2: float, type2: int, 
-                    interactions: np.ndarray, global_repulsion: float, 
-                    max_radius: float, min_radius: float):
-    """
-    Calculates the interaction force between two particles based on their 
-    positions, types, and the interactions matrix. This function also ensures
-    that no division by zero occurs when calculating the force.
-    """
+                     px2: float, py2: float, type2: int, 
+                     interactions: np.ndarray, global_repulsion: float, 
+                     max_radius: float, min_radius: float,
+                     max_repulsion: float = 5.0):
+
     force_strength = interactions[type1, type2]
     distance = _distance(px1, py1, px2, py2)
     epsilon = 1e-12  # Small value to prevent division by zero
@@ -44,6 +66,10 @@ def calculate_force(px1: float, py1: float, type1: int,
 
     # Repulsion applies at all distances, but increases with smaller distance
     repulsion_strength = global_repulsion / (distance + epsilon)  
+
+    # cap repulsion to prevent particles from bursting apart too much
+    repulsion_strength = min(repulsion_strength, max_repulsion)  
+    
     x_repulsion = -direction_x * repulsion_strength
     y_repulsion = -direction_y * repulsion_strength
 

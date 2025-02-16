@@ -20,14 +20,25 @@ class InteractionsInterface:
         
         # Calculate how big each field has to be
         num_types = self.interaction_matrix.number_of_types
-        self.field_size = abs(top_left[0] - right) / (num_types + 1)
-        
-        self.__initiate_fields()
 
-    def draw(self, surface):
-        """
-        Draws the whole InteractionsInterface including type-indicators and current state of InteractionMatrix.
-        surface: Pygame Surface to draw on.
+        self.field_size = (right - top_left[0]) / (num_types+1)
+        
+        # initiation the matrix fields
+        rel_x, rel_y = top_left
+        
+        self.fields = {
+            (i, j): pygame.Rect((rel_x + (j+1)*self.field_size, rel_y + (i+1)*self.field_size), (self.field_size, self.field_size))
+            for i in range(num_types) for j in range(num_types)  # i = row; j = col
+        }
+
+
+    def draw(self, surface, mouse_pos):
+        """Draws the whole InteractionsInterface including type-indicators and current state of InteractionMatrix
+        
+        params:
+            surface: Pygame Surface to draw on.
+            mouse_pos (x, y): to determine if mouse hovers over a field
+
         """
         self.__draw_type_indicators(surface)
 
@@ -41,6 +52,12 @@ class InteractionsInterface:
                 color = (255 * abs(interaction_value), 0, 0)  # ... fade from black to red (repulsion)
                 
             pygame.draw.rect(surface, color, field_rect)
+            
+            # show value when mouse hovers field
+            if field_rect.collidepoint(mouse_pos):
+                text_surface = pygame.font.Font(None, 36).render(str(interaction_value), True, (255, 255, 255))
+                text_rect = text_surface.get_rect(center=field_rect.center)
+                surface.blit(text_surface, text_rect)
 
     def handle_click(self, event: pygame.event.Event, adjust_by: float = 0.2):
         """
@@ -66,21 +83,6 @@ class InteractionsInterface:
             if event.button == 5 and interaction_value > -1:  # If the mouse wheel was scrolled down and the interaction value is greater than -1 ...
                 self.interaction_matrix.interactions[key] = round(interaction_value - adjust_by, 2)  # ... decrease the interaction value by `adjust_by`, rounded to 2 decimal places
 
-    def __initiate_fields(self):
-        """
-        Generates a dictionary containing InteractionMatrix indcices as keys, associating pygame.Rect objects serving as buttons to each field.
-        Pygame provides a method that returns the dict item of clicked pygame rect.
-        """
-        rel_x, rel_y = self.relative_position
-        field_size = self.field_size
-        types = self.interaction_matrix.number_of_types
-
-        # i = row; j = col
-        self.fields = {(i, j): pygame.Rect(rel_x + (j + 1) * field_size,
-                                           rel_y + (i + 1) * field_size,
-                                           field_size, field_size)
-                       for i in range(types) for j in range(types)}
-                
     def __draw_type_indicators(self, surface):
         """Indicating the rows and columns of InteractionMatix with corresponding colors of particle types.
         """

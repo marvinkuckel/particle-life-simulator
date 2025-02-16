@@ -1,3 +1,4 @@
 *cache*
 *vscode*
-FETCH_HEAD
+.DS_Store
+profiling_results.prof
