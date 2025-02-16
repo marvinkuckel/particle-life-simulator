@@ -81,7 +81,7 @@ class Simulation:
         Clears grid for updating particle positions in one step.
         Updates particle position and adds it to appropriate cell
         """
-        start_time = time.time()
+ 
 
         self.cells = {key: [] for key in self.cells}
 
@@ -115,9 +115,6 @@ class Simulation:
                                     p1.apply_force(force_x, force_y)
 
         self.enforce_boundaries()
-
-        end_time = time.time()  # End time
-        print(f"Update duration: {end_time - start_time:.4f} seconds")  # Print duration
 
     def enforce_boundaries(self):
         """
