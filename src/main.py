@@ -20,7 +20,6 @@ simulation_parameters = {
     "max_radius": 0.15,         # distance at which interactions force is weakest and after which it stops
     "global_repulsion": 0.004,  # repulsive force acting on all particles
     "friction": 0.5,            # slows particles down over time
-    "random_movement": 0,       # random particle movement
 }
 
 
@@ -50,7 +49,6 @@ class Main:
             simulation_parameters["time_factor"],
             simulation_parameters["force_scaling"],
             simulation_parameters["friction"],
-            simulation_parameters["random_movement"]
         )
 
         simulation_controlls = {
