@@ -4,50 +4,87 @@ from numba import njit
 import numpy as np
 
 class InteractionMatrix:
+    """
+    Represent a matrix of interaction forces between different types of particles.
+    num_types (int): The number of particle types.
+    min_radius (float): The shortest distance at which particles interact.
+    max_radius (float): The farthest distance at which particles interact.
+    global_repulsion (float): The global repulsive force between all particles to prevent overlap.
+    interactions (numpy.ndarray): A matrix storing the interaction forces between particle types.
+    """
     def __init__(self, num_types: int, min_radius: float, max_radius: float, global_repulsion: float):
         """
-        Creates a matrix of forces between particle types.
-        num_types: Number of particle types.
-        min_radius: Shortest distance at which particles interact.
-        max_radius: Farthest distance at which particles interact.
-        global_repulsion: Repulsive force between all particles to prevent overlap.
+        Initializes the InteractionMatrix object with the given parameters.
+        num_types (int): The number of different particle types.
+        min_radius (float): The minimum distance for interaction.
+        max_radius (float): The maximum distance for interaction.
+        global_repulsion (float): The repulsive force between all particles to prevent overlap.
         """
-        self.number_of_types = num_types
-        self.min_radius = min_radius
-        self.max_radius = max_radius
-        self.global_repulsion = global_repulsion
-
-        # Numpy array which stores type pairs & their interaction force 
-        self.interactions = np.zeros((num_types, num_types), dtype=np.float64)  # Initialize matrix with zeros
+        self.number_of_types = num_types  # Number of particle types
+        self.min_radius = min_radius  # Minimum distance for interaction
+        self.max_radius = max_radius  # Maximum distance for interaction
+        self.global_repulsion = global_repulsion  # Global repulsion factor
+        
+        # Numpy array to store the interaction forces between particle types
+        # Initialize with zeros, where interactions[i, j] represents the force between type i and type j
+        self.interactions = np.zeros((num_types, num_types), dtype=np.float64)
+        
+        # Randomly populate the interaction matrix with forces
         for i in range(num_types):
             for j in range(num_types):
-
+                # Randomly assign a force of either positive or negative, scaled by a random factor
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
     
     def randomize_fields(self):
+        """
+        Randomizes the interaction matrix, reassigning random forces between particle types.
+        This can be used to change interactions at any point in time.
+        """
         for i in range(self.number_of_types):
             for j in range(self.number_of_types):
+                # Randomly assign a force value for each pair of particle types
                 self.interactions[i, j] = random.choice((1, -1)) * random.choice((0, 0.2, 0.4, 0.6, 0.8, 1))
     
     def set_min_radius(self, min_radius: float):
+        """
+        Sets the minimum radius for particle interaction.
+        min_radius (float): The new minimum interaction radius.
+        """
         self.min_radius = min_radius
         
     def get_min_radius(self):
+        """
+        Returns the current minimum radius for particle interaction.
+        float: The minimum interaction radius.
+        """
         return self.min_radius
         
     def set_max_radius(self, max_radius: float):
+        """
+        Sets the maximum radius for particle interaction.
+        max_radius (float): The new maximum interaction radius.
+        """
         self.max_radius = max_radius
         
     def get_max_radius(self):
+        """
+        Returns the current maximum radius for particle interaction.
+        """
         return self.max_radius
         
     def set_global_repulsion(self, global_repulsion: float):
+        """
+        Sets the global repulsion force between all particles to prevent overlap.
+        global_repulsion (float): The new global repulsion force value.
+        """
         self.global_repulsion = global_repulsion
         
     def get_global_repulsion(self):
+        """
+        Returns the current global repulsion force between particles.
+        """
         return self.global_repulsion
-        
-        
+
 @njit            
 def calculate_force(px1: float, py1: float, type1: int, 
                      px2: float, py2: float, type2: int, 
