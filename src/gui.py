@@ -109,7 +109,8 @@ class Button():
             pos = self.rect.topleft
             screen.blit(self.image, (pos[0] + 5, pos[1] + 5))
         else:
-            text_surface = self.font.render(self.text, True, (255, 255, 255))
+            text_color = (0, 0, 0) if self.text in ["Start", "Stop", "Reset", "Exit"] else (255, 255, 255)
+            text_surface = self.font.render(self.text, True, text_color)
             text_rect = text_surface.get_rect(center=rect.center)
             screen.blit(text_surface, text_rect)
 
@@ -157,7 +158,7 @@ class GUI:
             'christmas-grey': (80, 90, 120),
             'christmas-blue': (0, 30, 250),
             'easter-yellow': (246, 255, 181),
-            'easter-green': (167, 230, 192),
+            'easter-green': (163, 217, 165),
             'easter-pink': (255, 171, 171),
             'easter-red': (255, 103, 125),
             'easter-lilac': (200, 181, 228)
