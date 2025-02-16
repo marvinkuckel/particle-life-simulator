@@ -170,7 +170,7 @@ class GUI:
         self.control_panel_width = screen_width - screen_height
         self.padding = padding  # distance between panel elementens and panel boundaries/borders
         
-        self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white','christmas-blue']]
+        self.particle_colors = [self.colors[key] for key in ['easter-green','easter-red','easter-yellow','easter-lilac','easter-pink']]
         self.interaction_matrix = interaction_matrix
         
         self.text_fields = []
@@ -204,7 +204,7 @@ class GUI:
         
         y_offset = self.instruction_rect.top + 10
 
-        header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]
+        header_parts = ["Welcome to the easter", "Particle", "Life", "Simulator", "!"]
         segment_colors = [
             self.colors['christmas-white'],
             self.colors['christmas-red'],
@@ -229,10 +229,10 @@ class GUI:
         y_offset += header_font.get_height()
 
         color_words = {
-            "Start": self.colors['christmas-green'],
-            "Stop": self.colors['christmas-gold'],
-            "Reset": self.colors['christmas-red'],
-            "Exit": self.colors['christmas-blue'],
+            "Start": self.colors['easter-green'],
+            "Stop": self.colors['easter-yellow'],
+            "Reset": self.colors['easter-red'],
+            "Exit": self.colors['easter-lilac'],
             "attraction": (0, 224, 0),
             "repulsion": (224, 0, 0)
         }
