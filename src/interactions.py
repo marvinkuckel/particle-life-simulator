@@ -21,7 +21,8 @@ class InteractionMatrix:
 def calculate_force(px1: float, py1: float, type1: int, 
                      px2: float, py2: float, type2: int, 
                      interactions: np.ndarray, global_repulsion: float, 
-                     max_radius: float, min_radius: float):
+                     max_radius: float, min_radius: float,
+                     max_repulsion: float = 5.0):
     force_strength = interactions[type1, type2]
     distance = _distance(px1, py1, px2, py2)
     epsilon = 1e-12   # small value to prevent division by zero
@@ -32,6 +33,10 @@ def calculate_force(px1: float, py1: float, type1: int,
 
     # repulsion applies at all distances, but increases with smaller distance
     repulsion_strength = global_repulsion / (distance + epsilon)  
+
+    # cap repulsion to prevent particles from bursting apart too much
+    repulsion_strength = min(repulsion_strength, max_repulsion)  
+    
     x_repulsion = -direction_x * repulsion_strength
     y_repulsion = -direction_y * repulsion_strength
 
