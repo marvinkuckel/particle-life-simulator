@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 import time
 
@@ -40,7 +41,7 @@ class Text:
 
 
 class Button():
-    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36, image_path = None):
+    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36, image_name = None):
         """
         params:
             pos: (x, y) coordinates of buttons top-left corner
@@ -61,8 +62,11 @@ class Button():
         self.clicked_time = 0
         self.size_factor = 1
         
-        self.image = pygame.image.load(image_path) if image_path else None
-        if self.image:
+        self.image = None
+        if image_name:
+            cwd = os.getcwd()
+            path = os.path.join(cwd, "images", image_name)
+            self.image = pygame.image.load(path)
             size = self.rect.size[0] - 10, self.rect.size[1] - 10
             self.image = pygame.transform.scale(self.image, size)
 
@@ -344,7 +348,7 @@ class GUI:
         # ----- randomize matrix fields -----
         pos = self.interactions_interface.relative_position
         pos = pos[0] + 30, pos[1] + 30
-        self.buttons.append(Button(pos, (40, 40), "", self.colors['normal-button'], self.interaction_matrix.randomize_fields, image_path="images/refresh.png"))
+        self.buttons.append(Button(pos, (40, 40), "", self.colors['normal-button'], self.interaction_matrix.randomize_fields, image_name="refresh.png"))
         
         # ----- particle count -----
         self.text_fields.append(Text("Particles: ", 24, (0, self.sliders[-2].rect.bottom + 25)))
