@@ -58,20 +58,17 @@ To install locally via Git Bash:
 
 ## Configuration
 Adjustable parameters:  
-- In `particle.py`:  
-  - Number of types  
-  - Size  
-  - Speed  
-  - Friction  
 
 - In `main.py`:  
-  - Number of particles  
-  - Number of types  
-
-- In `simulation.py`:  
-  - Number of particles  
-  - Speed  
-  - Size of simulation grid  
+  - "n_particles": Number of particles 
+  - "n_types": Number of particle types
+  - "time_factor": Controls simulation speed
+  - "force_scaling": Scales force acting on particles velocity
+  - "min_radius": Distance at which interaction starts and its force is strongest
+  - "max_radius": Distance at which interactions force is weakest and after which it stops
+  - "global_repulsion": Repulsive force acting on all particles
+  - "friction": Slows particles down over time
+  - "random_movement": Adds random movement to particles position
 
 ## Execution  
 The main loop is located in `main.py`.  
@@ -100,7 +97,7 @@ Positions of graphical elements in `gui.py` can be adjusted for different screen
 - **Test 1:** Verify the interaction matrix is 3x3.  
 - **Test 2:** Ensure forces between two particles return correct values.  
 
-#### 2. `interaction_matrix.py` Tests:  
+#### 2. `interaction_matrix.py` Tests (does not exist any more):
 - **Test 1:** Verify `calculate_force` returns zero when no interaction exists.  
 - **Test 2:** Ensure `calculate_force` produces nonzero force for interacting particles.  
 
