@@ -1,11 +1,46 @@
-from typing import Callable, Tuple
-import pygame
+from typing import Tuple
 import time
+
+import pygame
 
 from interactions_interface import InteractionsInterface
 
+class Text:
+    """Simple text that can be updated by a get function and drawn in draw_control_panel"""
+    def __init__(self, text, font_size, center, font_color = (255, 255, 255), get_value: callable = None, length = None):
+        self.text = text
+        self.length = length
+        self.get_value = get_value
+        
+        self.font = pygame.font.Font(None, font_size)
+        self.font_color = font_color
+        
+        self.rendered_text = self.font.render(text, True, font_color)
+        self.rect = self.rendered_text.get_rect(center=center)
+    
+    def draw(self, screen):
+        screen.blit(self.rendered_text, self.rect)
+        
+    def set_text(self, text):
+        self.rendered_text = self.font.render(text, True, self.font_color)
+        #self.rect = self.rendered_text.get_rect(center=self.rect.center)
+        
+    def update(self):
+        if self.get_value:
+            text = str(round(self.get_value(), 4))
+            
+            # keep text the same length
+            if self.length:
+                while len(text) < self.length:
+                    text = text + "0"
+                if len(text) > self.length:
+                    text = text[:self.length]
+                
+            self.set_text(text)
+
+
 class Button():
-    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: Callable = None):
+    def __init__(self, pos: Tuple[int, int], size: Tuple[int, int], text: str, color: Tuple[int, int, int], action: callable = None, font_size = 36):
         """
         params:
             pos: (x, y) coordinates of buttons top-left corner
@@ -17,7 +52,7 @@ class Button():
         self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.text = text
         self.color = color
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font(None, font_size)
         self.action = action
         self.original_color = color
         self.hover_color = self.lighten_color(color, factor=2)
@@ -63,10 +98,33 @@ class Button():
                 self.clicked_time = time.time()
                 self.size_factor = 0.95
 
+
+class Slider:
+    def __init__(self, left_x, right_x, center_y, min_value, max_value, setter: callable, getter: callable):
+        self.x, self.y = left_x, center_y
+        self.min_value, self.max_value = min_value, max_value
+        self.setter, self.getter = setter, getter
+        
+        self.width = right_x - left_x
+        self.slider_pos = self.x + self.width * (getter() / max_value - min_value)
+        self.rect = pygame.Rect(self.x - 7, self.y - 7, self.width + 14, 14)
+        
+    def update(self, x_position):
+        self.slider_pos = min(max(x_position, self.x), self.x + self.width)
+        value = (x_position - self.x) / self.width * (self.max_value - self.min_value)
+        self.setter(max(min(value, self.max_value), self.min_value))
+
+    def draw(self, surface):
+        pygame.draw.line(surface, (80, 80, 80), (self.x, self.y), (self.x+self.width, self.y), 3)
+        pygame.draw.circle(surface, (0, 0, 0), (self.slider_pos, self.y), 7)
+        pygame.draw.circle(surface, (160, 160, 160), (self.slider_pos, self.y), 4)
+    
+
 class GUI:
     colors = {
             'simulation-background': (20, 20, 25),
             'panel-background': (25, 25, 35),
+            'normal-button': (40, 40, 40),
             'christmas-red': (220, 20, 60),
             'christmas-darkred': (150, 25, 30),
             'christmas-green': (0, 128, 0),
@@ -85,9 +143,12 @@ class GUI:
         self.particle_colors = [self.colors[key] for key in ['christmas-green','christmas-red','christmas-gold','christmas-white']]
         self.interaction_matrix = interaction_matrix
         
+        self.text_fields = []
+        self.sliders = []
+        
         self.buttons = []
-        self.initiate_buttons(simulation_controlls, h_padding = self.padding)
-
+        self.initiate_main_buttons(simulation_controlls, h_padding = self.padding)
+        
         self.interactions_interface = InteractionsInterface(interaction_matrix, self.particle_colors,
                                                             top_left = (screen_width - self.control_panel_width//2, self.buttons[-1].rect.bottom),
                                                             right = self.screen_width - self.padding)
@@ -99,17 +160,19 @@ class GUI:
         else:
             self.instruction_rect = pygame.Rect(self.screen_width - self.control_panel_width + 10, 
                                                 180, self.control_panel_width - 20, 250)
+        
+        self.initiate_secondary_buttons(simulation_controlls)
 
     def draw_instruction(self):
         pygame.draw.rect(self.screen, self.colors['christmas-grey'], self.instruction_rect)
         pygame.draw.rect(self.screen, (250, 5, 80), self.instruction_rect, 3)
 
-        font = pygame.font.Font(None, 23)
-        header_font = pygame.font.Font(None, 28)
+        font = pygame.font.Font(None, 18)
+        header_font = pygame.font.Font(None, 23)
         header_font.set_bold(True)
         header_font.set_italic(True)
         
-        y_offset = self.instruction_rect.top + 25
+        y_offset = self.instruction_rect.top + 10
 
         header_parts = ["Welcome to the", "Particle", "Life", "Simulator", "!"]
         segment_colors = [
@@ -156,7 +219,7 @@ class GUI:
             "Increase repulsion - right mouse button / scroll downwards"
         ]
 
-        y_offset = self.instruction_rect.top + 70
+        y_offset = self.instruction_rect.top + 30
 
         x_offset = self.instruction_rect.left - 20
 
@@ -180,12 +243,13 @@ class GUI:
 
                 centered_x_offset += word_surface.get_width() + font.size(" ")[0]
 
-            y_offset += font.get_height() + 13
+            y_offset += font.get_height() + 5
             
         # set the height so the text fits inside
         self.instruction_rect.height = y_offset - self.instruction_rect.top + 10
+        self.instruction_rect.bottom = self.screen_height - 10
 
-    def initiate_buttons(self, simulation_controlls, h_padding = 60):
+    def initiate_main_buttons(self, simulation_controlls, h_padding = 60):
         # setup parameters for button initiation
         button_width = self.control_panel_width - 2*h_padding
         button_height = 50
@@ -202,22 +266,104 @@ class GUI:
         self.buttons.append(Button((button_x, button_y + 120), (button_width, button_height), "Reset", self.colors['christmas-red'], simulation_controlls['reset']))
         self.buttons.append(Button((button_x, button_y + 180), (button_width, button_height), "Exit", self.colors['christmas-blue'], simulation_controlls['exit']))
 
-    def button_click(self, event):
-        self.interactions_interface.handle_click(event)
+    def initiate_secondary_buttons(self, simulation_controls):
+        """Buttons for managing parameters influencing the particle interactions
+        Call this method after creating interactions_interface"""
+        font = pygame.font.Font(None, 24)
         
+        relative_x = self.screen_width - self.control_panel_width + self.padding//2
+        relative_y = self.buttons[-1].rect.bottom + 50
+        
+        section_width = self.screen_width - self.control_panel_width//2 - relative_x - 10
+        center_x = relative_x + section_width//2
+        
+        # ------ simulation speed ------
+        font_size = font.size("0.000")
+        options = [-0.25, -0.1, -0.02, 0.02, 0.1, 0.25]
+        button_size = (section_width - font_size[0] - 25) // len(options)
+        
+        for i, change_by in enumerate(options):
+            func = lambda change=change_by: simulation_controls['set_sim_speed'](change)
+                
+            sign = "+" if change_by > 0 else "-"
+            text = sign + str(int(abs(change_by) * 100)) + "%"
+            
+            offset = 0 if i < len(options)//2 else font_size[0] + 20
+            self.buttons.append(Button((relative_x + i*(button_size + 4) + offset, relative_y), (button_size, button_size),
+                                       text, self.colors["normal-button"], func,
+                                       font_size=button_size//2))
+
+        setting_name = Text("Simulation Speed", 26, center=(center_x, self.buttons[-1].rect.top - 20))
+        setting_value = Text("0.0000", 24, (center_x + 5, self.buttons[-1].rect.center[1]), get_value=simulation_controls['get_sim_speed'], length=6)
+        self.text_fields.extend((setting_name, setting_value))
+        
+        relative_x += 8
+        
+        # ----- force scaling -----
+        y = self.buttons[-1].rect.bottom + 20
+        self.text_fields.append(Text("Force Scaling", 18, center=(relative_x + section_width//4 - 7, y)))
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0.001, 1,
+                                   simulation_controls['set_force_scaling'], simulation_controls['get_force_scaling']))
+        
+        # ----- friction -----
+        self.text_fields.append(Text("Friction", 18, center=(relative_x + section_width*3//4 - 7, y)))
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 15, self.text_fields[-1].rect.bottom + 10, 0, 1,
+                                   simulation_controls['set_friction'], simulation_controls['get_friction']))
+        
+        # ----- random movement ----
+        y = self.sliders[-1].rect.bottom + 20
+        self.text_fields.append(Text("Random Movement", 18, center=(relative_x + section_width//4 - 7, y)))
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0, 0.01,
+                                   simulation_controls['set_random_movement'], simulation_controls['get_random_movement']))
+        
+        # ----- global repulsion -----
+        self.text_fields.append(Text("Global Repulsion", 18, center=(relative_x + section_width*3//4 - 7, y)))
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 20, self.text_fields[-1].rect.bottom + 10, 0.0001, 0.01,
+                                   self.interaction_matrix.set_global_repulsion, self.interaction_matrix.get_global_repulsion))
+        
+        # ----- min radius -----
+        y = self.sliders[-1].rect.bottom + 20
+        self.text_fields.append(Text("Min Radius", 18, center=(relative_x + section_width//4 - 7, y)))
+        self.sliders.append(Slider(relative_x, relative_x + section_width//2 - 20, self.text_fields[-1].rect.bottom + 10, 0.00001, 0.049,
+                                   self.interaction_matrix.set_min_radius, self.interaction_matrix.get_min_radius))
+        
+        # ----- max radius -----
+        self.text_fields.append(Text("Max Radius", 20, center=(relative_x + section_width*3//4 - 7, y)))
+        self.sliders.append(Slider(relative_x + section_width//2, relative_x + section_width - 20, self.text_fields[-1].rect.bottom + 10, 0.05, 0.3,
+                                   self.interaction_matrix.set_max_radius, self.interaction_matrix.get_max_radius))
+        
+    def button_click(self, event):
         for button in self.buttons:
             if button.rect.collidepoint(event.pos):
                 button.trigger(event)
+                if button.text.lower() == "reset":
+                    self.draw_particles([])
+                return
+        
+        for slider in self.sliders:
+            if slider.rect.collidepoint(event.pos):
+                print(event.pos, slider.rect, slider.rect.collidepoint(event.pos))
+                slider.update(event.pos[0])
+                return
+        
+        self.interactions_interface.handle_click(event)
                 
     def draw_control_panel(self, mouse_pos):
         pygame.draw.rect(self.screen, self.colors['panel-background'],
                          pygame.Rect(self.screen_width-self.control_panel_width, 0,
                                      self.control_panel_width, self.screen_height))
         
+        for text in self.text_fields:
+            text.update()
+            text.draw(self.screen)
+        
         for button in self.buttons:
             button.draw(self.screen, mouse_pos)
             
-        self.interactions_interface.draw(self.screen)
+        for slider in self.sliders:
+            slider.draw(self.screen)
+            
+        self.interactions_interface.draw(self.screen, mouse_pos)
 
         self.draw_instruction()
             

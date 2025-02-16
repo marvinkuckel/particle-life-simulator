@@ -7,6 +7,7 @@ from interactions import InteractionMatrix, calculate_force
 
 
 class Simulation:
+
     def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles: int, num_types: int, time_factor: float, force_scaling: float, friction: float, random_movement: float):
             self.width, self.height = width, height
 
@@ -35,6 +36,7 @@ class Simulation:
 
         # generates number of particles specified in main.py
         for i in range(self.num_particles):
+
             particle = Particle(
                 position=(random.random(), random.random()),
                 velocity=(1 - random.random() * 2, 1 - random.random() * 2),
@@ -134,4 +136,48 @@ class Simulation:
 
     def reset_simulation(self):
         # removes all particles
-        self.particles = np.array([], dtype=object)              
+        self.particles = np.array([], dtype=object)
+    
+    
+    def adjust_time_factor(self, by_percent: float):
+        self.time_factor += self.time_factor * by_percent
+        
+    def get_time_factor(self):
+        return self.time_factor
+    
+    
+    def set_force_scaling(self, force_scaling: float):
+        self.force_scaling = force_scaling
+        
+    def get_force_scaling(self):
+        return self.force_scaling
+        
+        
+    def modify_particle_count(self, by: int):
+        if by > 0:
+            self.num_types = by
+            self.particles.extend(self.generate_particles())
+            self.num_types = len(self.particles)
+        else:
+            self.particles = self.particles[:len(self.particles) - abs(by)]
+            
+    def get_particle_count(self):
+        return len(self.particles)
+            
+    
+    def set_friction(self, friction: float):
+        """friction: number between 0 and 1"""
+        for particle in self.particles:
+            particle.friction = friction
+            
+    def get_friction(self):
+        return self.particles[0].friction
+    
+    
+    def set_random_movement(self, random_movement: float):
+        """random_movement: should be close to 0 or be 0"""
+        for particle in self.particles:
+            particle.random_movement = random_movement
+
+    def get_random_movement(self):
+        return self.particles[0].random_movement

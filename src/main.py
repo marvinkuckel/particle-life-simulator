@@ -50,6 +50,7 @@ class Main:
             simulation_parameters["time_factor"],
             simulation_parameters["force_scaling"],
             simulation_parameters["friction"],
+            simulation_parameters["random_movement"]
         )
 
         simulation_controlls = {
@@ -57,13 +58,21 @@ class Main:
             'stop': self.simulation.stop_simulation,
             'reset': self.simulation.reset_simulation,
             'exit': lambda: pygame.event.post(pygame.event.Event(pygame.QUIT)),
+            'set_sim_speed': self.simulation.adjust_time_factor,
+            'get_sim_speed': self.simulation.get_time_factor,
+            'set_force_scaling': self.simulation.set_force_scaling,
+            'get_force_scaling': self.simulation.get_force_scaling,
+            'set_particle_count': self.simulation.modify_particle_count,
+            'get_particle_count': self.simulation.get_particle_count,
+            'set_friction': self.simulation.set_friction,
+            'get_friction': self.simulation.get_friction,
+            'set_random_movement': self.simulation.set_random_movement,
+            'get_random_movement': self.simulation.get_random_movement
         }
         
         self.gui = GUI(self.screen, self.width, self.height, self.interaction_matrix, simulation_controlls)
 
     def handle_events(self):
-        mouse_pos = pygame.mouse.get_pos()
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -72,7 +81,6 @@ class Main:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.gui.button_click(event)
-                self.gui.draw_control_panel(mouse_pos)
 
     def run(self, fps: int):
         self.running = True
