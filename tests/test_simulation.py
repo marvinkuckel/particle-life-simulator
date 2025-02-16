@@ -1,11 +1,10 @@
 import unittest
 import numpy as np
+import sys
+sys.path.insert(0, 'src')  # Stellet sicher, dass src im Python-Pfad ist
 from particle import Particle
 from src.interactions import InteractionMatrix, calculate_force
 from src.simulation import Simulation
-import sys
-sys.path.insert(0, 'src')
-from particle import Particle
 
 
 class TestSimulation(unittest.TestCase):
