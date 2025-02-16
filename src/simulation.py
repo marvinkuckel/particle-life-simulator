@@ -7,7 +7,7 @@ from interactions import InteractionMatrix, calculate_force
 
 
 class Simulation:
-    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles: int, num_types: int, time_factor: float, force_scaling: float, friction: float):
+    def __init__(self, width, height, interaction_matrix: InteractionMatrix, num_particles: int, num_types: int, time_factor: float, force_scaling: float, friction: float, random_movement: float):
             self.width, self.height = width, height
 
             # dynamically partitions simulation area into grid adjusted for screens aspect ratio
@@ -23,6 +23,7 @@ class Simulation:
             # stores these values so particle can access the parameters set in main.py
             self.friction = friction  
             self.force_scaling = force_scaling 
+            self.random_movement = random_movement
 
             self.particles = self.generate_particles()
 
@@ -40,7 +41,8 @@ class Simulation:
                 type=i % self.num_types,
                 size=1,  
                 friction=self.friction,
-                force_scaling=self.force_scaling
+                force_scaling=self.force_scaling,
+                random_movement=self.random_movement
             )
 
             particles = np.concatenate((particles, np.array([particle])))

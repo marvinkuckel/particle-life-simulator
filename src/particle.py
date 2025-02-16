@@ -1,14 +1,16 @@
+import random
 import pygame
 
 
 class Particle:
-    def __init__(self, type: int, size: int, position: tuple, velocity: tuple, friction: float, force_scaling: float):
+    def __init__(self, type: int, size: int, position: tuple, velocity: tuple, friction: float, force_scaling: float, random_movement: float):
         self.type = type
         self.size = size
         self.position = position
         self.velocity = velocity
         self.friction = friction
         self.force_scaling = force_scaling          
+        self.random_movement = random_movement
         self.last_render_position = tuple(position) # tracks particles last rendered position
 
 
@@ -25,6 +27,12 @@ class Particle:
         # update position based on new velocity
         self.position = [self.position[0] + self.velocity[0] * dt * time_factor,
                         self.position[1] + self.velocity[1] * dt * time_factor]
+        
+        # update position based on random movement
+        if self.random_movement:
+            rand_x = random.uniform(-self.random_movement, self.random_movement) * time_factor
+            rand_y = random.uniform(-self.random_movement, self.random_movement) * time_factor
+            self.position = [self.position[0] + rand_x, self.position[1] + rand_y]
 
 
     def draw(self, screen, screen_width, screen_height, color, threshold=0.001):  
