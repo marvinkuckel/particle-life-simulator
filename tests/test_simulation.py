@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import sys
 sys.path.insert(0, 'src')  # Stellet sicher, dass src im Python-Pfad ist
-from particle import Particle
+from src.particle import Particle
 from src.interactions import InteractionMatrix, calculate_force
 from src.simulation import Simulation
 
@@ -28,7 +28,7 @@ class TestSimulation(unittest.TestCase):
 
     def test_update(self):
         # Testet das Update der Simulation und die Position der Partikel nach einem Update
-        initial_positions = [p.position.copy() for p in self.simulation.particles]
+        initial_positions = [p.position for p in self.simulation.particles]
         self.simulation.update(dt=0.1)
         # Überprüfe, ob sich die Partikelpositionen geändert haben
         for i, particle in enumerate(self.simulation.particles):
@@ -37,7 +37,7 @@ class TestSimulation(unittest.TestCase):
 
     def test_enforce_boundaries(self):
         # Testet, ob die Begrenzungen korrekt durchgesetzt werden
-        particle = Particle(position=(0.0, 0.0), velocity=(-1.0, -1.0), type=0, size=1, friction=0.5, random_movement=0.01)
+        particle = Particle(position=[0.0, 0.0], velocity=[-1.0, -1.0], type=0, size=1, friction=0.5, random_movement=0.01)
         self.simulation.particles = np.array([particle])  # Setze einen Partikel in der Simulation
         self.simulation.enforce_boundaries()
         # Teste, ob der Partikel auf der anderen Seite des Rands wieder auftaucht
